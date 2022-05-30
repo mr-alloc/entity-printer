@@ -6,6 +6,8 @@ import io.taech.print.EntityPrinter;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -24,7 +26,7 @@ public class DefaultPrinter implements EntityPrinter {
 
 
     @Override
-    public String draw(final Object obj) throws Exception {
+    public String draw(final Object obj) {
 
         if (obj instanceof List) {
             List<Object> listObject = (List) obj;
@@ -34,7 +36,7 @@ public class DefaultPrinter implements EntityPrinter {
         return printList(Arrays.asList(obj));
     }
 
-    private String printList(final List<Object> list) throws Exception {
+    private String printList(final List<Object> list) {
         long start = System.currentTimeMillis();
         if (list.isEmpty())
             return PRINT_TARGET_IS_NULL;
@@ -54,12 +56,13 @@ public class DefaultPrinter implements EntityPrinter {
             setFieldValues(obj, fields, columns, columnMapList);
         });
 
+        final String layer = drawLayer(columns);
 
         //== 컬럼 명 ==//
-        stackHeader(columns, builder);
+        stackHeader(columns, builder, layer);
 
         //== 컬럼 값 ==//
-        stackBody(columns, columnMapList, builder);
+        stackBody(columns, columnMapList, builder, layer);
         float result = (System.currentTimeMillis() - start) / 1000.0f;
         builder.append(String.format("Printed Stop Watch: %.4fsec\n", result));
         return builder.toString();
@@ -94,7 +97,7 @@ public class DefaultPrinter implements EntityPrinter {
                 String strValue = value.toString().replaceAll("(\\n|\\r|\\t)", " ");
 
                 final String fieldName = field.getName();
-                Integer length = strValue.getBytes(StandardCharsets.UTF_8).length;
+                Integer length = strValue.length();
                 final Column column = columns.get(i);
                 if (length > DEFAULT_MAX_COLUMN_LENGTH) {
                     strValue = strValue.substring(0, (DEFAULT_MAX_COLUMN_LENGTH - ELLIPSIS.length())).concat(ELLIPSIS);
@@ -111,29 +114,34 @@ public class DefaultPrinter implements EntityPrinter {
         columnMapList.add(columnMap);
     }
 
-    private void stackLayer(final List<Column> columns, final StringBuilder builder) {
-        builder.append(APEX);
+    private String drawLayer(final List<Column> columns) {
+        StringBuilder subBuilder = new StringBuilder();
+        subBuilder.append(APEX);
         columns.stream().forEach(c -> {
-            IntStream.range(0, c.getLength()).forEach((n) -> builder.append("-"));
-            builder.append(APEX);
+            IntStream.range(0, c.getLength()).forEach((n) -> subBuilder.append("-"));
+            subBuilder.append(APEX);
         });
-        builder.append(LINEFEED);
+        subBuilder.append(LINEFEED);
+        return subBuilder.toString();
+
     }
 
-    private void stackHeader(final List<Column> columns, final StringBuilder builder) {
-        stackLayer(columns, builder);
+    private void stackHeader(final List<Column> columns, final StringBuilder builder, final String layer) {
+        builder.append(layer);
         columns.stream().forEach(c ->
                 builder.append(String.format("%s %-" + (c.getLength() - 1) + "s", WALL, c.getName())));
         builder.append(WALL + LINEFEED);
-        stackLayer(columns, builder);
+        builder.append(layer);
     }
 
-    private void stackBody(final List<Column> columns, final List<Map<String, String>> columnMapList, final StringBuilder builder) {
+    private void stackBody(final List<Column> columns, final List<Map<String, String>> columnMapList, final StringBuilder builder, final String layer) {
         columnMapList.stream().forEach((cm) -> {
-            columns.stream().forEach(c ->
-                builder.append(String.format("%s %-" + (c.getLength() - 1) + "s", WALL, cm.get(c.getName()))));
+            columns.stream().forEach(c -> {
+                final String value = cm.get(c.getName());
+                builder.append(String.format("%s %-" + (c.getLength() - 1) + "s", WALL, value));
+            });
             builder.append(WALL + LINEFEED);
-            stackLayer(columns, builder);
+            builder.append(layer);
         });
     }
 

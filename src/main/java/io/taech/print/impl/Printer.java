@@ -11,7 +11,7 @@ public class Printer implements EntityPrinter {
     }
 
     @Override
-    public String draw(Object obj) throws Exception {
+    public String draw(Object obj) {
         return printer.draw(obj);
     }
 }
