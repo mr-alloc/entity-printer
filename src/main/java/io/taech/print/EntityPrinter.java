@@ -2,6 +2,6 @@ package io.taech.print;
 
 public interface EntityPrinter {
 
-    String draw(Object obj) throws Exception;
+    String draw(Object obj);
 
 }
