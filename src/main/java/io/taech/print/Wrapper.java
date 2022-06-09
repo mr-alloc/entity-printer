@@ -1,5 +1,7 @@
 package io.taech.print;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +15,10 @@ public enum Wrapper {
     DOUBLE("Double", Double.class),
     FLOAT("Float", Float.class),
     STRING("String", String.class),
-    CHARACTER("Character", Character.class);
+    CHARACTER("Character", Character.class),
+    LOCAL_DATETIME("LocalDateTime", LocalDateTime.class),
+    LOCAL_DATE("LocalDate", LocalDate.class),
+    ;
 
     private String className;
     private Class clazz;
