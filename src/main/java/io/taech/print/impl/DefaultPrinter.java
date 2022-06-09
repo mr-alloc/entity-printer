@@ -2,6 +2,7 @@ package io.taech.print.impl;
 
 import io.taech.print.Column;
 import io.taech.print.EntityPrinter;
+import io.taech.print.Wrapper;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ public class DefaultPrinter implements EntityPrinter {
     private static final String DEFAULT_NULL_STRING = "(null)";
 
     private static final String PRINT_TARGET_IS_NULL = "This print target is null.";
+
 
 
     @Override
@@ -52,7 +54,6 @@ public class DefaultPrinter implements EntityPrinter {
         list.stream().forEach(obj -> {
 
             final Field[] fields = obj.getClass().getDeclaredFields();
-
             setFieldValues(obj, fields, columns, columnMapList);
         });
 
@@ -69,7 +70,9 @@ public class DefaultPrinter implements EntityPrinter {
     }
 
     private void setColumnData(final Stream<Field> fields, final List<Column> columns) {
-        fields.forEach(f -> {
+        fields.filter(f ->
+            Wrapper.has(f.getType().getSimpleName())
+        ).forEach(f -> {
             try {
                 f.setAccessible(true);
 
@@ -85,7 +88,9 @@ public class DefaultPrinter implements EntityPrinter {
 
     private void setFieldValues(Object obj, Field [] fields, List<Column> columns, List<Map<String, String>> columnMapList) {
         Map<String, String> columnMap = new HashMap<>();
-        IntStream.range(0, fields.length).forEach(i -> {
+        IntStream.range(0, fields.length).filter(i ->
+            Wrapper.has(fields[i].getType().getSimpleName())
+        ).forEach(i -> {
             try {
                 final Field field = fields[i];
                 field.setAccessible(true);
