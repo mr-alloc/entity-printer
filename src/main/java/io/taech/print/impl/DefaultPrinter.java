@@ -69,9 +69,12 @@ public class DefaultPrinter implements EntityPrinter {
     }
 
     private void setColumnData(final Stream<Field> fields, final List<Column> columns) {
-        fields.filter(f ->
-            Wrapper.has(f.getType().getSimpleName())
-        ).forEach(f -> {
+        fields.filter(f -> {
+                        if(f.getType().isEnum())
+                            return true;
+
+                    return Wrapper.has(f.getType().getSimpleName());
+                }).forEach(f -> {
             try {
                 f.setAccessible(true);
 
@@ -87,9 +90,12 @@ public class DefaultPrinter implements EntityPrinter {
 
     private void setFieldValues(Object obj, Field [] fields, List<Column> columns, List<Map<String, String>> columnMapList) {
         Map<String, String> columnMap = new HashMap<>();
-        IntStream.range(0, fields.length).filter(i ->
-            Wrapper.has(fields[i].getType().getSimpleName())
-        ).forEach(i -> {
+        IntStream.range(0, fields.length).filter(i -> {
+            if(fields[i].getType().isEnum())
+                return true;
+
+            return Wrapper.has(fields[i].getType().getSimpleName());
+        }).forEach(i -> {
             try {
                 final Field field = fields[i];
                 field.setAccessible(true);
