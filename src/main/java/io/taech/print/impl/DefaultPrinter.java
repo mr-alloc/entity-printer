@@ -49,7 +49,6 @@ public class DefaultPrinter implements EntityPrinter {
 
         final Object o = list.get(0);
         setColumnData(Arrays.stream(o.getClass().getDeclaredFields()), columns);
-        builder.append(String.format("\nList<%s> ↓\n", o.getClass().getSimpleName()));
 
         list.stream().forEach(obj -> {
 
