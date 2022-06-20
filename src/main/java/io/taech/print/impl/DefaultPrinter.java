@@ -27,11 +27,8 @@ public class DefaultPrinter implements EntityPrinter {
 
     private static final String PRINT_TARGET_IS_NULL = "This print target is null.";
 
-    private RowBuilder rowBuilder = new BasicRowBuilder();
-
     @Override
     public String draw(final Object obj) {
-        rowBuilder.prepare(obj);
 
         if (obj instanceof List) {
             final List<Object> listObject = (List) obj;
@@ -155,7 +152,5 @@ public class DefaultPrinter implements EntityPrinter {
             builder.append(layer);
         });
     }
-
-    
 
 }
