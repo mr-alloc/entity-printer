@@ -3,6 +3,7 @@ package io.taech;
 import io.taech.print.builder.BasicRowBuilder;
 import io.taech.print.builder.RowBuilder;
 import io.taech.print.impl.Printer;
+import io.taech.util.StopWatch;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,16 +20,22 @@ public class Main {
         list.add(new History(6L, "LOOKING_FOR_ACCOUNT", "인증 이메일 전송", "915e5f48-c836-4170-aed0-d818d88f16f7"));
         list.add(new History(7L, "JOIN", "인증 이메일 전송", "915e5f48-c836-4170-aed0-d818d88f16f7"));
 
-
+        StopWatch watch = new StopWatch();
+        watch.start();
         RowBuilder rowBuilder = new BasicRowBuilder();
         rowBuilder.proceed(list).build();
+        watch.addAndPause();
 
         System.out.println(rowBuilder.getResult());
+
 
         Printer out = new Printer();
-        System.out.println(out.draw(list));
-        System.out.println(rowBuilder.getResult());
+        out.draw(list);
+        watch.addAndPause();
 
+        System.out.println(out.getResult());
+
+        System.out.println(watch.getResult());
     }
 
 }

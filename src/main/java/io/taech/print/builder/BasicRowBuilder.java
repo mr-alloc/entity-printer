@@ -36,12 +36,11 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     @Override
     public String build() {
-        watch.addAndPause();
         String[] colNames = super.columns.stream().map(Column::getName).toArray(String[]::new);
         super.builder
                 .append(Resource.join(Resource.LINEFEED, super.floor))
                 .append(String.format(super.room, colNames))
-                .append(Resource.join(Resource.LINEFEED, super.floor));
+                .append(super.floor);
 
         watch.addAndPause();
         super.columnMapList.stream().forEach(coList -> {

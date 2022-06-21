@@ -5,6 +5,7 @@ import io.taech.print.EntityPrinter;
 import io.taech.print.Wrapper;
 import io.taech.print.builder.BasicRowBuilder;
 import io.taech.print.builder.RowBuilder;
+import io.taech.util.StopWatch;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -25,10 +26,13 @@ public class DefaultPrinter implements EntityPrinter {
     private static final String ELLIPSIS = "...";
     private static final String DEFAULT_NULL_STRING = "(null)";
 
+    private StopWatch watch = new StopWatch();
+
     private static final String PRINT_TARGET_IS_NULL = "This print target is null.";
 
     @Override
     public String draw(final Object obj) {
+        watch.start();
 
         if (obj instanceof List) {
             final List<Object> listObject = (List) obj;
@@ -38,30 +42,35 @@ public class DefaultPrinter implements EntityPrinter {
         return printList(Arrays.asList(obj));
     }
 
+    public String getResult() {
+        return this.watch.getResult();
+    }
+
     private String printList(final List<Object> list) {
         if (list.isEmpty())
             return PRINT_TARGET_IS_NULL;
-
         final StringBuilder builder = new StringBuilder();
         final List<Column> columns = new ArrayList<>();
         final List<Map<String, String>> columnMapList = new ArrayList<>();
-
+        watch.addAndPause();
         final Object o = list.get(0);
         setColumnData(Arrays.stream(o.getClass().getDeclaredFields()), columns);
-
+        watch.addAndPause();
         list.stream().forEach(obj -> {
 
             final Field[] fields = obj.getClass().getDeclaredFields();
             setFieldValues(obj, fields, columns, columnMapList);
         });
-
+        watch.addAndPause();
         final String layer = drawLayer(columns);
 
         //== 컬럼 명 ==//
         stackHeader(columns, builder, layer);
+        watch.addAndPause();
 
         //== 컬럼 값 ==//
         stackBody(columns, columnMapList, builder, layer);
+        watch.addAndPause();
         return builder.toString();
     }
 

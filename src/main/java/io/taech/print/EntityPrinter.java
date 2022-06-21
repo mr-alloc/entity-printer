@@ -4,4 +4,5 @@ public interface EntityPrinter {
 
     String draw(Object obj);
 
+    String getResult();
 }

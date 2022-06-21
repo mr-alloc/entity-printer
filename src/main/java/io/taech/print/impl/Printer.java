@@ -14,4 +14,9 @@ public class Printer implements EntityPrinter {
     public String draw(Object obj) {
         return printer.draw(obj);
     }
+
+    @Override
+    public String getResult() {
+        return printer.getResult();
+    }
 }

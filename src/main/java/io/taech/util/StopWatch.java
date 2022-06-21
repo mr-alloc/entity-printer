@@ -26,6 +26,7 @@ public class StopWatch {
 
     public String getResult() {
         final ArrayList<Record> records = new ArrayList<>();
+        records.add(new Record(0,(times.get(0) - startTime) / 1000.0f));
         IntStream.range(1, times.size()).forEach(idx -> {
             long time = times.get(idx) - times.get(idx - 1);
             records.add(new Record(idx, (time / 1000.0f)));
