@@ -4,36 +4,49 @@ import io.taech.print.builder.BasicRowBuilder;
 import io.taech.print.builder.RowBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StopWatch {
 
     private Long startTime;
-    private ArrayList<Long> times;
+    private Stack<Moment> moments;
 
     public StopWatch() {
         this.startTime = null;
-        this.times = new ArrayList<>();
+        this.moments = new Stack<>();
     }
 
     public void start() {
         this.startTime = System.currentTimeMillis();
     }
 
-    public void addAndPause() {
-        this.times.add(System.currentTimeMillis());
+    public void pause(final String message) {
+        if(CommonUtils.isNull(this.startTime))
+            throw new NullPointerException("Start time cannot be null. Please use stopWatch.start() first.");
+
+        Long oldTime;
+
+        if(moments.isEmpty())
+            oldTime = startTime;
+        else
+            oldTime = moments.peek().getMillis();
+
+        final Long executionTime = (System.currentTimeMillis() - oldTime);
+        this.moments.add(new Moment(executionTime, message));
+
     }
 
     public String getResult() {
-        final ArrayList<Record> records = new ArrayList<>();
-        records.add(new Record(0,(times.get(0) - startTime) / 1000.0f));
-        IntStream.range(1, times.size()).forEach(idx -> {
-            long time = times.get(idx) - times.get(idx - 1);
-            records.add(new Record(idx, (time / 1000.0f)));
-        });
-
         final RowBuilder builder = new BasicRowBuilder();
-        return builder.proceed(records)
+        final List<Record> records = IntStream.range(0, moments.size()).mapToObj((idx) -> {
+            final Moment moment = moments.get(idx);
+            return new Record(idx + 1, moment.getMessage(), String.format("%4.4f sec",(moment.getMillis() / 1000.f)));
+        }).collect(Collectors.toList());
+
+        return builder.proceed(records, Record.class)
                 .build();
     }
 }

@@ -9,8 +9,10 @@ import io.taech.util.StopWatch;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class BasicRowBuilder extends AbstractRowBuilder {
@@ -18,37 +20,32 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     private static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
     private static final Integer DEFAULT_MAX_LENGTH = 30;
     private static final Integer EACH_SPACE_LENGTH = 2;
-    private StopWatch watch = new StopWatch();
+    final String NODATA = "(no data)";
 
     @Override
-    public RowBuilder proceed(final Object target) {
-        watch.start();
-        super.initialize(target);
-        watch.addAndPause();
+    public RowBuilder proceed(final Object target, Class<?> typeClass) {
+        super.initialize(target, typeClass);
         this.setting();
         return this;
     }
 
-    @Override
-    public String getResult() {
-        return this.watch.getResult();
-    }
 
     @Override
     public String build() {
-        String[] colNames = super.columns.stream().map(Column::getName).toArray(String[]::new);
+        final String[] colNames = super.columns.stream().map(Column::getName).toArray(String[]::new);
         super.builder
                 .append(Resource.join(Resource.LINEFEED, super.floor))
                 .append(String.format(super.room, colNames))
                 .append(super.floor);
 
-        watch.addAndPause();
         super.columnMapList.stream().forEach(coList -> {
             final String room = String.format(super.room, Arrays.stream(colNames).map(name ->
                     coList.get(name)).toArray(String[]::new));
             builder.append(room).append(super.floor);
         });
-        watch.addAndPause();
+
+        if(columnMapList.isEmpty())
+            builder.append(emptyFloor());
 
         return builder.toString();
     }
@@ -62,7 +59,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
                 field.setAccessible(true);
 
                 final String fieldName = field.getName();
-                columns.add(new Column((fieldName.getBytes(StandardCharsets.UTF_8).length + 2), fieldName));
+                columns.add(new Column((fieldName.length() + 2), fieldName));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new PrintException(e.getMessage());
@@ -75,7 +72,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     private void setFieldValues() {
         super.streamSupplier.get().filter(row -> super.targetClass.equals(row.getClass())).forEach(row -> {
             final Field [] fields = row.getClass().getDeclaredFields();
-            final Map<String, String> columnMap = new LinkedHashMap<>();
+            final Map<String, String> columnMap = new HashMap<>();
             IntStream.range(0, fields.length).filter(idx -> isPrintable(fields[idx])).forEach(idx -> {
                 try {
                     final Field field = fields[idx];
@@ -103,7 +100,6 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
         String strValue = value.toString().replaceAll(IGNORE_LETTER, " ");
         Integer lengthOfValue = strValue.length();
-
         if(lengthOfValue > DEFAULT_MAX_LENGTH) {
             strValue = String.format("%s...", strValue.substring(0, (DEFAULT_MAX_LENGTH - 3)));
             lengthOfValue = DEFAULT_MAX_LENGTH;
@@ -116,9 +112,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     private void setting() {
         this.setFloor();
-        watch.addAndPause();
         this.setRoom();
-        watch.addAndPause();
     }
 
     private void setFloor() {
@@ -136,10 +130,17 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     private void setRoom() {
         final StringBuilder subBuilder = new StringBuilder();
-        super.columns.stream().forEach(col ->
+        super.columns.stream().forEach((col) ->
             subBuilder.append(String.format("%s %%-%ds", Resource.WALL, (col.getLength() - 1))));
 
         subBuilder.append(Resource.join(Resource.WALL, Resource.LINEFEED));
         super.room = subBuilder.toString();
+    }
+
+    private String emptyFloor() {
+        final int halfOfMessage = NODATA.length() / 2;
+        final String left = Resource.join("%", String.valueOf((this.floor.length() / 2) + halfOfMessage), "s");
+        String.format(left, NODATA);
+        return null;
     }
 }

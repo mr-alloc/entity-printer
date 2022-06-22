@@ -1,6 +1,5 @@
 package io.taech.constant;
 
-import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class Resource {

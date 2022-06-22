@@ -2,10 +2,9 @@ package io.taech.print.builder;
 
 import io.taech.print.Column;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -23,10 +22,11 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     protected String room;
 
 
-    protected void initialize(final Object target) {
+    protected void initialize(final Object target, Class<?> typeClass) {
         this.floor = null;
         this.room = null;
         this.streamSupplier = null;
+        this.targetClass = typeClass;
 
         extractClassInfo(target);
         this.calculateColumnInfo();
@@ -38,12 +38,10 @@ public abstract class AbstractRowBuilder implements RowBuilder {
      * @param target
      */
     private void extractClassInfo(final Object target) {
-        if(target instanceof Collection)
+        if(target instanceof Collection) {
             this.streamSupplier = () -> ((Collection) target).stream();
-        else
+        }else
             this.streamSupplier = () -> Stream.of(target);
-
-        this.targetClass = streamSupplier.get().findFirst().get().getClass();
     }
 
     abstract void calculateColumnInfo();

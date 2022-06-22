@@ -1,8 +1,18 @@
 package io.taech.print;
 
-public interface EntityPrinter {
+import io.taech.constant.BuilderType;
+import io.taech.print.builder.RowBuilder;
+import io.taech.print.builder.RowBuilderProvider;
 
-    String draw(Object obj);
+public class EntityPrinter {
 
-    String getResult();
+
+    public static String draw(Object obj, Class<?> typeClass) {
+        final RowBuilder rowBuilder = RowBuilderProvider.getInstance()
+                .provide(BuilderType.DEFAULT);
+
+        rowBuilder.proceed(obj, typeClass);
+
+        return rowBuilder.build();
+    }
 }
