@@ -1,9 +1,9 @@
 package io.taech.print.builder;
 
+import io.taech.constant.PrintOption;
 import io.taech.print.Column;
+import io.taech.print.PrintOptionAware;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -13,13 +13,14 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     protected Class<?> targetClass;
 
     protected Supplier<Stream<Object>> streamSupplier;
-    private Stream<Object> rowStream;
 
     protected final StringBuilder builder = new StringBuilder();
     protected final List<Column> columns = new ArrayList<>();
     protected final List<Map<String, String>> columnMapList = new ArrayList<>();
     protected String floor;
     protected String room;
+
+    protected PrintOptionAware optionAware;
 
 
     protected void initialize(final Object target, Class<?> typeClass) {
@@ -32,6 +33,11 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         this.calculateColumnInfo();
     }
 
+    @Override
+    public void options(final PrintOption... options) {
+
+
+    }
 
     /**
      * Check class of target with such as first element of stream

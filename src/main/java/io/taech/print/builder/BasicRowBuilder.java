@@ -12,15 +12,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class BasicRowBuilder extends AbstractRowBuilder {
 
     private static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
     private static final Integer DEFAULT_MAX_LENGTH = 30;
     private static final Integer EACH_SPACE_LENGTH = 2;
-    final String NODATA = "(no data)";
+    final String EMPTY = "empty";
 
     @Override
     public RowBuilder proceed(final Object target, Class<?> typeClass) {
@@ -32,20 +34,20 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     @Override
     public String build() {
-        final String[] colNames = super.columns.stream().map(Column::getName).toArray(String[]::new);
+        final Supplier<Stream<Column>> columns = () -> super.columns.stream();
         super.builder
                 .append(Resource.join(Resource.LINEFEED, super.floor))
-                .append(String.format(super.room, colNames))
+                .append(String.format(super.room, columns.get().map(Column::nameWithType).toArray(String[]::new)))
                 .append(super.floor);
 
         super.columnMapList.stream().forEach(coList -> {
-            final String room = String.format(super.room, Arrays.stream(colNames).map(name ->
+            final String room = String.format(super.room, Arrays.stream(columns.get().map(Column::getName).toArray(String[]::new)).map(name ->
                     coList.get(name)).toArray(String[]::new));
             builder.append(room).append(super.floor);
         });
 
         if(columnMapList.isEmpty())
-            builder.append(emptyFloor());
+            builder.append(emptyFloor()).append(super.floor);
 
         return builder.toString();
     }
@@ -59,7 +61,10 @@ public class BasicRowBuilder extends AbstractRowBuilder {
                 field.setAccessible(true);
 
                 final String fieldName = field.getName();
-                columns.add(new Column((fieldName.length() + 2), fieldName));
+                final String name = field.getType().getSimpleName();
+
+                final Column newColumn = new Column(fieldName, name);
+                columns.add(newColumn);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new PrintException(e.getMessage());
@@ -91,7 +96,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     private boolean isPrintable(final Field field) {
 
-        return (field.getType().isEnum() || Wrapper.has(field.getType().getSimpleName()));
+        return (field.getType().isEnum() || field.getType().isPrimitive() || Wrapper.has(field.getType().getSimpleName()));
     }
 
     private String getStringValue(Object value, final Column column) {
@@ -138,9 +143,13 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     }
 
     private String emptyFloor() {
-        final int halfOfMessage = NODATA.length() / 2;
-        final String left = Resource.join("%", String.valueOf((this.floor.length() / 2) + halfOfMessage), "s");
-        String.format(left, NODATA);
-        return null;
+        final String form = Resource.join(
+                Resource.WALL, " %-",
+                String.valueOf(this.floor.length() - 4), "s",
+                Resource.WALL, Resource.LINEFEED);
+
+        final String empty = String.format(form, EMPTY);
+
+        return empty;
     }
 }

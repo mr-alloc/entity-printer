@@ -6,7 +6,6 @@ import io.taech.print.builder.RowBuilderProvider;
 
 public class EntityPrinter {
 
-
     public static String draw(Object obj, Class<?> typeClass) {
         final RowBuilder rowBuilder = RowBuilderProvider.getInstance()
                 .provide(BuilderType.DEFAULT);
