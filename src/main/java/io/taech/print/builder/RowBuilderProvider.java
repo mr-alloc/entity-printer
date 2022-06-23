@@ -15,10 +15,10 @@ public class RowBuilderProvider {
     }
 
     public RowBuilder provide(final BuilderType builderType) {
-        final Class<? extends RowBuilder> clazz = BuilderType.get(builderType);
         RowBuilder rowBuilder = null;
         try {
 
+            final Class<? extends RowBuilder> clazz = BuilderType.get(builderType);
             final Constructor<? extends RowBuilder> constructor = clazz.getConstructor();
             rowBuilder = constructor.newInstance();
 

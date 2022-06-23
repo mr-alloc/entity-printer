@@ -1,16 +1,20 @@
 package io.taech.print.builder;
 
+import io.taech.DefaultPrintableFieldManager;
+import io.taech.PrintableFieldManager;
 import io.taech.constant.PrintOption;
 import io.taech.print.Column;
 import io.taech.print.PrintOptionAware;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public abstract class AbstractRowBuilder implements RowBuilder {
 
-    protected Class<?> targetClass;
+
+    protected PrintableFieldManager fieldManager;
 
     protected Supplier<Stream<Object>> streamSupplier;
 
@@ -22,21 +26,28 @@ public abstract class AbstractRowBuilder implements RowBuilder {
 
     protected PrintOptionAware optionAware;
 
-
     protected void initialize(final Object target, Class<?> typeClass) {
         this.floor = null;
         this.room = null;
         this.streamSupplier = null;
-        this.targetClass = typeClass;
+        this.fieldManager = new DefaultPrintableFieldManager(typeClass);
 
         extractClassInfo(target);
         this.calculateColumnInfo();
     }
 
     @Override
-    public void options(final PrintOption... options) {
+    public RowBuilder options(final PrintOption... options) {
+        this.optionAware = new PrintOptionAware(options);
+        return this;
+    }
 
+    @Override
+    public RowBuilder activateFields(final Integer... indexes) {
+        if(optionAware.isExceptColumn())
+            this.fieldManager.activatePrintableFields(indexes);
 
+        return this;
     }
 
     /**
@@ -44,9 +55,9 @@ public abstract class AbstractRowBuilder implements RowBuilder {
      * @param target
      */
     private void extractClassInfo(final Object target) {
-        if(target instanceof Collection) {
+        if(target instanceof Collection)
             this.streamSupplier = () -> ((Collection) target).stream();
-        }else
+        else
             this.streamSupplier = () -> Stream.of(target);
     }
 

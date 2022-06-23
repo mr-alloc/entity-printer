@@ -31,7 +31,6 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         return this;
     }
 
-
     @Override
     public String build() {
         final Supplier<Stream<Column>> columns = () -> super.columns.stream();
@@ -54,16 +53,14 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     @Override
     void calculateColumnInfo() {
-        Arrays.stream(super.targetClass.getDeclaredFields()).filter(field ->
-                isPrintable(field)
-        ).forEach(field -> {
+        Arrays.stream(super.fieldManager.getActivatedFields()).forEach(field -> {
             try {
                 field.setAccessible(true);
 
                 final String fieldName = field.getName();
                 final String name = field.getType().getSimpleName();
 
-                final Column newColumn = new Column(fieldName, name);
+                final Column newColumn = new Column(fieldName, name, super.optionAware.isNonDataType());
                 columns.add(newColumn);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -75,28 +72,25 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     }
 
     private void setFieldValues() {
-        super.streamSupplier.get().filter(row -> super.targetClass.equals(row.getClass())).forEach(row -> {
-            final Field [] fields = row.getClass().getDeclaredFields();
-            final Map<String, String> columnMap = new HashMap<>();
-            IntStream.range(0, fields.length).filter(idx -> isPrintable(fields[idx])).forEach(idx -> {
-                try {
-                    final Field field = fields[idx];
-                    field.setAccessible(true);
+        super.streamSupplier.get()
+                .filter(row -> super.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
+                    final Field [] fields = super.fieldManager.getActivatedFields();
+                    final Map<String, String> columnMap = new HashMap<>();
 
-                    final Column column = columns.get(idx);
-                    final String fieldName = field.getName();
-                    final String strValue = getStringValue(field.get(row), column);
+                    IntStream.range(0, fields.length).forEach(idx -> {
+                        try {
+                            final Field field = fields[idx];
+                            field.setAccessible(true);
 
-                    columnMap.put(fieldName, strValue);
-                } catch(Exception skipped) {}
-            });
-            super.columnMapList.add(columnMap);
-        });
-    }
+                            final Column column = columns.get(idx);
+                            final String fieldName = field.getName();
+                            final String strValue = getStringValue(field.get(row), column);
 
-    private boolean isPrintable(final Field field) {
-
-        return (field.getType().isEnum() || field.getType().isPrimitive() || Wrapper.has(field.getType().getSimpleName()));
+                            columnMap.put(fieldName, strValue);
+                        } catch(Exception skipped) {}
+                    });
+                    super.columnMapList.add(columnMap);
+                });
     }
 
     private String getStringValue(Object value, final Column column) {

@@ -1,17 +1,17 @@
 package io.taech.print;
 
 import io.taech.constant.BuilderType;
-import io.taech.print.builder.RowBuilder;
-import io.taech.print.builder.RowBuilderProvider;
+import io.taech.util.CommonUtils;
 
 public class EntityPrinter {
 
-    public static String draw(Object obj, Class<?> typeClass) {
-        final RowBuilder rowBuilder = RowBuilderProvider.getInstance()
-                .provide(BuilderType.DEFAULT);
+    public static String draw(final Object obj, final Class<?> typeCLass) {
+        return draw(obj, typeCLass, null);
+    }
+    public static String draw(final Object obj, final Class<?> typeClass, PrintConfigurator configurator) {
+        if(CommonUtils.isNull(configurator))
+            configurator = new PrintConfigurator(BuilderType.DEFAULT);
 
-        rowBuilder.proceed(obj, typeClass);
-
-        return rowBuilder.build();
+        return configurator.apply().build();
     }
 }
