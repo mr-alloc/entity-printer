@@ -4,6 +4,7 @@ import io.taech.print.Wrapper;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class DefaultPrintableFieldManager implements PrintableFieldManager{
@@ -22,6 +23,7 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager{
     public Class<?> getTypeClass() {
         return this.typeCLass;
     }
+
     @Override
     public Field [] getActivatedFields() {
         return this.fields;
@@ -29,9 +31,11 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager{
 
 
     @Override
-    public void activatePrintableFields(final Integer... fieldIndexes) {
+    public void activatePrintableFields(final List<Integer> fieldIndexes) {
 
-        this.fields = Arrays.stream(fieldIndexes).distinct().sorted()
-                .filter(i -> this.fields.length >= i).map(i -> this.fields[i]).toArray(Field[]::new);
+        this.fields = fieldIndexes.stream()
+                .filter(i -> this.fields.length >= i)
+                .map(i -> this.fields[i])
+                .filter(defaultCondition).toArray(Field[]::new);
     }
 }

@@ -2,32 +2,51 @@ package io.taech.print;
 
 import io.taech.constant.BuilderType;
 import io.taech.constant.PrintOption;
-import io.taech.print.builder.RowBuilder;
-import io.taech.print.builder.RowBuilderProvider;
+import io.taech.util.CommonUtils;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PrintConfigurator {
 
-    private RowBuilder rowBuilder;
+    private BuilderType builderType;
+    private List<PrintOption> options;
+    private List<Integer> activateIndexes;
 
-    public PrintConfigurator(final BuilderType type) {
-        this.rowBuilder = RowBuilderProvider.getInstance().provide(type)
-                .proceed(obj, typeClass);
+    public PrintConfigurator() {
+        this.builderType = BuilderType.DEFAULT;
+    }
+    public PrintConfigurator(final BuilderType builderType) {
+        this.builderType = builderType;
+    }
 
+    public BuilderType getBuilderType() {
+        return this.builderType;
+    }
+
+    public List<PrintOption> getOptions() {
+        return this.options;
+    }
+
+    public List<Integer> getActivateIndexes() {
+        return this.activateIndexes;
     }
 
     public PrintConfigurator options(final PrintOption... options) {
-        this.rowBuilder.options(options);
+        this.options = CommonUtils.isNull(options) ? new ArrayList<>() : Arrays.stream(options)
+                .distinct().collect(Collectors.toList());
 
         return this;
     }
 
-    public PrintConfigurator activateFields(final Integer... filedIndexes) {
-        this.rowBuilder.activateFields(filedIndexes);
-        return this;
-    }
+    public PrintConfigurator activateFields(final Integer... fieldIndexes) {
+        this.activateIndexes = CommonUtils.isNull(fieldIndexes) ? new ArrayList<>() : Arrays.stream(fieldIndexes)
+                .distinct().sorted().collect(Collectors.toList());
 
-    RowBuilder apply() {
-        return this.rowBuilder;
+        return this;
     }
 
 

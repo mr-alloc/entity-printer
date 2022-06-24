@@ -6,7 +6,6 @@ import io.taech.constant.PrintOption;
 import io.taech.print.Column;
 import io.taech.print.PrintOptionAware;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -37,13 +36,13 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     }
 
     @Override
-    public RowBuilder options(final PrintOption... options) {
+    public RowBuilder options(final List<PrintOption> options) {
         this.optionAware = new PrintOptionAware(options);
         return this;
     }
 
     @Override
-    public RowBuilder activateFields(final Integer... indexes) {
+    public RowBuilder activateFields(final List<Integer> indexes) {
         if(optionAware.isExceptColumn())
             this.fieldManager.activatePrintableFields(indexes);
 

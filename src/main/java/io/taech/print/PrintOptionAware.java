@@ -4,6 +4,7 @@ import io.taech.constant.PrintOption;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,11 +14,11 @@ public class PrintOptionAware {
     private boolean exceptColumn = false;
     private boolean koreanMode = false;
 
-    private Set<PrintOption> optionSet;
+    private List<PrintOption> options;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
 
-    public PrintOptionAware(final PrintOption... options) {
-        this.optionSet = Arrays.stream(options).collect(Collectors.toSet());
+    public PrintOptionAware(final List<PrintOption> options) {
+        this.options = options;
         activate();
     }
 
@@ -35,10 +36,10 @@ public class PrintOptionAware {
 
 
     public void activate() {
-        if(optionSet.isEmpty())
+        if(options.isEmpty())
             return;
 
-        optionSet.stream().forEach((o) -> checkOption(o));
+        options.stream().forEach((o) -> checkOption(o));
     }
 
     public void checkOption(final PrintOption option) {
