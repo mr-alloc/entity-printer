@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class DefaultPrintableFieldManager implements PrintableFieldManager{
+public class DefaultPrintableFieldManager implements PrintableFieldManager {
 
     private Class<?> typeCLass;
     private Field [] fields;
@@ -35,7 +35,7 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager{
 
         this.fields = fieldIndexes.stream()
                 .filter(i -> this.fields.length >= i)
-                .map(i -> this.fields[i])
+                .map(i -> this.fields[i -1])
                 .filter(defaultCondition).toArray(Field[]::new);
     }
 }

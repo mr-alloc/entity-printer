@@ -1,19 +1,13 @@
 package io.taech.print.builder;
 
 import io.taech.constant.Resource;
-import io.taech.excepted.PrintException;
 import io.taech.print.Column;
-import io.taech.print.Wrapper;
-import io.taech.util.StopWatch;
 
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -22,7 +16,9 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     private static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
     private static final Integer DEFAULT_MAX_LENGTH = 30;
     private static final Integer EACH_SPACE_LENGTH = 2;
-    final String EMPTY = "empty";
+
+    private final String EMPTY = "empty";
+    private final String NO_ACTIVATED = "There are no Activated fields";
 
     @Override
     public RowBuilder proceed(final Object target, Class<?> typeClass) {
@@ -34,6 +30,9 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     @Override
     public String build() {
         final Supplier<Stream<Column>> columns = () -> super.columns.stream();
+        if(super.fieldManager.getActivatedFields().length == 0)
+            return builder.append(NO_ACTIVATED).append(Resource.LINEFEED).toString();
+
         super.builder
                 .append(Resource.join(Resource.LINEFEED, super.floor))
                 .append(String.format(super.room, columns.get().map(Column::nameWithType).toArray(String[]::new)))
@@ -42,13 +41,14 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         super.columnMapList.stream().forEach(coList -> {
             final String room = String.format(super.room, Arrays.stream(columns.get().map(Column::getName).toArray(String[]::new)).map(name ->
                     coList.get(name)).toArray(String[]::new));
-            builder.append(room).append(super.floor);
+            super.builder.append(room).append(super.floor);
         });
 
-        if(columnMapList.isEmpty())
-            builder.append(emptyFloor()).append(super.floor);
+        if (columnMapList.isEmpty())
+            super.builder.append(emptyFloor()).append(super.floor);
 
-        return builder.toString();
+
+        return super.builder.toString();
     }
 
     @Override
@@ -64,7 +64,6 @@ public class BasicRowBuilder extends AbstractRowBuilder {
                 columns.add(newColumn);
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new PrintException(e.getMessage());
             }
         });
 
@@ -137,9 +136,11 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     }
 
     private String emptyFloor() {
+        int floorLength = this.floor.length() -4 <= 0 ? 6 : this.floor.length() -4;
+
         final String form = Resource.join(
                 Resource.WALL, " %-",
-                String.valueOf(this.floor.length() - 4), "s",
+                String.valueOf(floorLength), "s",
                 Resource.WALL, Resource.LINEFEED);
 
         final String empty = String.format(form, EMPTY);

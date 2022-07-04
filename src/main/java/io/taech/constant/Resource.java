@@ -9,7 +9,8 @@ public class Resource {
     public static final String APEX = "+";
     public static final String WALL = "|";
     public static final String LINEFEED = "\n";
-    public static final  String BRICK = "-";
+    public static final String BRICK = "-";
+    public static final String KOREAN_REGEXP = "[ㄱ-ㅎㅏ-ㅣ가-힣]";
 
     public static String join(String... strings) {
         final StringJoiner joiner = new StringJoiner("");

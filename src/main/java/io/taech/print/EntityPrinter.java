@@ -15,12 +15,9 @@ public class EntityPrinter {
         if(CommonUtils.isNull(configurator))
             configurator = new PrintConfigurator();
 
-        final RowBuilder rowBuilder = RowBuilderProvider.getInstance()
-                .provide(configurator.getBuilderType());
-
-        return rowBuilder.proceed(obj, typeClass)
-                .options(configurator.getOptions())
-                .activateFields(configurator.getActivateIndexes())
+        return RowBuilderProvider.getInstance()
+                .provide(configurator)
+                .proceed(obj, typeClass)
                 .build();
     }
 }

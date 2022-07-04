@@ -4,7 +4,9 @@ import io.taech.DefaultPrintableFieldManager;
 import io.taech.PrintableFieldManager;
 import io.taech.constant.PrintOption;
 import io.taech.print.Column;
+import io.taech.print.PrintConfigurator;
 import io.taech.print.PrintOptionAware;
+import io.taech.util.CommonUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -24,6 +26,7 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     protected String room;
 
     protected PrintOptionAware optionAware;
+    private PrintConfigurator configurator;
 
     protected void initialize(final Object target, Class<?> typeClass) {
         this.floor = null;
@@ -31,20 +34,25 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         this.streamSupplier = null;
         this.fieldManager = new DefaultPrintableFieldManager(typeClass);
 
+        if (optionAware.isExceptColumn())
+            this.fieldManager.activatePrintableFields(configurator.getActivateIndexes());
+
+
+        if (this.fieldManager.getActivatedFields().length == 0)
+            return;
+
+
         extractClassInfo(target);
         this.calculateColumnInfo();
     }
 
     @Override
-    public RowBuilder options(final List<PrintOption> options) {
-        this.optionAware = new PrintOptionAware(options);
-        return this;
-    }
+    public RowBuilder config(final PrintConfigurator configurator) {
+        if(CommonUtils.isNull(configurator))
+            return this;
 
-    @Override
-    public RowBuilder activateFields(final List<Integer> indexes) {
-        if(optionAware.isExceptColumn())
-            this.fieldManager.activatePrintableFields(indexes);
+        this.optionAware = new PrintOptionAware(configurator.getOptions());
+        this.configurator = configurator;
 
         return this;
     }

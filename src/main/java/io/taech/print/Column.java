@@ -11,7 +11,7 @@ public class Column {
         this.name = name;
         this.type = type;
         this.length = ((nonDataType ? name.length() : nameWithType().length()) + 2);
-
+        this.nonDataType = nonDataType;
     }
 
     public void setLength(int length) {
@@ -23,7 +23,7 @@ public class Column {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String nameWithType() {
