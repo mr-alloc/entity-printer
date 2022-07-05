@@ -1,6 +1,8 @@
 package io.taech.print;
 
 
+import io.taech.constant.Resource;
+
 public class Column {
     private int length;
     private String name;

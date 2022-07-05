@@ -35,7 +35,7 @@ public class PrintOptionAware {
     }
 
 
-    public void activate() {
+    private void activate() {
         if(options.isEmpty())
             return;
 

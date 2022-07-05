@@ -103,6 +103,10 @@ public class BasicRowBuilder extends AbstractRowBuilder {
             lengthOfValue = DEFAULT_MAX_LENGTH;
         }
 
+        if(super.optionAware.isKoreanMode()) {
+
+        }
+
         column.setLength(Math.max(column.getLength(), (lengthOfValue + EACH_SPACE_LENGTH)));
 
         return strValue;
