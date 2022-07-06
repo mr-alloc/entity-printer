@@ -4,10 +4,15 @@ import io.taech.constant.Resource;
 import io.taech.print.Column;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -96,20 +101,31 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         if(value == null)
             value = "(null)";
 
-        String strValue = value.toString().replaceAll(IGNORE_LETTER, " ");
+        String strValue = typeControl(value).replaceAll(IGNORE_LETTER, " ");
         Integer lengthOfValue = strValue.length();
+
         if(lengthOfValue > DEFAULT_MAX_LENGTH) {
             strValue = String.format("%s...", strValue.substring(0, (DEFAULT_MAX_LENGTH - 3)));
             lengthOfValue = DEFAULT_MAX_LENGTH;
         }
 
-        if(super.optionAware.isKoreanMode()) {
-
-        }
-
         column.setLength(Math.max(column.getLength(), (lengthOfValue + EACH_SPACE_LENGTH)));
 
         return strValue;
+    }
+
+    private String typeControl(final Object value) {
+
+        Object result;
+
+        if(value instanceof ChronoLocalDate)
+            result = ((ChronoLocalDate) value).format(optionAware.getDateFormatter());
+        else if(value instanceof ChronoLocalDateTime)
+            result = ((ChronoLocalDateTime) value).format(optionAware.getDateFormatter());
+        else
+            result = value;
+
+        return result.toString();
     }
 
     private void setting() {

@@ -5,6 +5,7 @@ import io.taech.constant.PrintOption;
 import io.taech.util.CommonUtils;
 
 import java.lang.reflect.Field;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ public class PrintConfigurator {
     private BuilderType builderType;
     private List<PrintOption> options;
     private List<Integer> activateIndexes;
+    private DateTimeFormatter dateTimeFormatter;
 
     public PrintConfigurator() {
         this.builderType = BuilderType.DEFAULT;
@@ -50,4 +52,12 @@ public class PrintConfigurator {
     }
 
 
+    public PrintConfigurator dateformat(final DateTimeFormatter dateTimeFormatter) {
+        this.dateTimeFormatter = dateTimeFormatter;
+        return this;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return this.dateTimeFormatter;
+    }
 }

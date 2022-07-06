@@ -12,7 +12,7 @@ public class PrintOptionAware {
 
     private boolean nonDataType = false;
     private boolean exceptColumn = false;
-    private boolean koreanMode = false;
+    private boolean dateTimeFormat = false;
 
     private List<PrintOption> options;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
@@ -30,10 +30,9 @@ public class PrintOptionAware {
         return this.exceptColumn;
     }
 
-    public boolean isKoreanMode() {
-        return this.koreanMode;
+    public boolean hasDateTimeFormat() {
+        return this.dateTimeFormat;
     }
-
 
     private void activate() {
         if(options.isEmpty())
@@ -50,8 +49,8 @@ public class PrintOptionAware {
             case EXCEPT_COLUMN:
                 this.exceptColumn = true;
                 break;
-            case KOREAN_MODE:
-                this.koreanMode = true;
+            case DATETIME_FORMAT:
+                this.dateTimeFormat = true;
                 break;
             default:
                 throw new IllegalArgumentException("Not found print option.");

@@ -37,6 +37,8 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         if (optionAware.isExceptColumn())
             this.fieldManager.activatePrintableFields(configurator.getActivateIndexes());
 
+        if(optionAware.hasDateTimeFormat())
+            this.optionAware.setDateFormatter(configurator.getDateTimeFormatter());
 
         if (this.fieldManager.getActivatedFields().length == 0)
             return;
