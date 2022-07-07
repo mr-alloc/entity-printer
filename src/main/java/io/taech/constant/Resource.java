@@ -12,12 +12,12 @@ public class Resource {
     public static final String BRICK = "-";
     public static final String KOREAN_REGEXP = "[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]";
 
-    public static String join(String... strings) {
-        final StringJoiner joiner = new StringJoiner("");
+    public static String join(final String... strings) {
+        final StringBuilder builder = new StringBuilder();
 
         for(String str : strings)
-            joiner.add(str);
+            builder.append(str);
 
-        return joiner.toString();
+        return builder.toString();
     }
 }

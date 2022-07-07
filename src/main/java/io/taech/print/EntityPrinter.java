@@ -1,9 +1,8 @@
 package io.taech.print;
 
-import io.taech.constant.BuilderType;
-import io.taech.print.builder.RowBuilder;
 import io.taech.print.builder.RowBuilderProvider;
 import io.taech.util.CommonUtils;
+
 
 public class EntityPrinter {
 
