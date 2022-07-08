@@ -1,8 +1,7 @@
 package io.taech.print.builder;
 
-import io.taech.DefaultPrintableFieldManager;
-import io.taech.PrintableFieldManager;
-import io.taech.constant.PrintOption;
+import io.taech.print.field.manager.DefaultPrintableFieldManager;
+import io.taech.print.field.manager.PrintableFieldManager;
 import io.taech.print.Column;
 import io.taech.print.PrintConfigurator;
 import io.taech.print.PrintOptionAware;
@@ -24,6 +23,9 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     protected final List<Map<String, String>> columnMapList = new ArrayList<>();
     protected String floor;
     protected String room;
+
+    protected final String EMPTY = "empty";
+    protected final String NO_ACTIVATED = "There are no Activated fields";
 
     protected PrintOptionAware optionAware;
     private PrintConfigurator configurator;

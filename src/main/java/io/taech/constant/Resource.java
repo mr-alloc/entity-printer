@@ -10,7 +10,9 @@ public class Resource {
     public static final String WALL = "|";
     public static final String LINEFEED = "\n";
     public static final String BRICK = "-";
-    public static final String KOREAN_REGEXP = "[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]";
+    public static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
+    public static final Integer DEFAULT_MAX_LENGTH = 30;
+    public static final Integer EACH_SPACE_LENGTH = 2;
 
     public static String join(final String... strings) {
         final StringBuilder builder = new StringBuilder();

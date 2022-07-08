@@ -13,14 +13,11 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.taech.constant.Resource.*;
+
 public class BasicRowBuilder extends AbstractRowBuilder {
 
-    private static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
-    private static final Integer DEFAULT_MAX_LENGTH = 30;
-    private static final Integer EACH_SPACE_LENGTH = 2;
 
-    private final String EMPTY = "empty";
-    private final String NO_ACTIVATED = "There are no Activated fields";
 
     @Override
     public RowBuilder proceed(final Object target, Class<?> typeClass) {

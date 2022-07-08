@@ -1,6 +1,7 @@
 package io.taech.constant;
 
 import io.taech.print.builder.BasicRowBuilder;
+import io.taech.print.builder.MapRowBuilder;
 import io.taech.print.builder.RowBuilder;
 
 import java.util.Arrays;
@@ -9,7 +10,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum BuilderType {
-    DEFAULT(BasicRowBuilder.class)
+    DEFAULT(BasicRowBuilder.class),
+    MAP(MapRowBuilder.class)
     ;
     private Class<? extends RowBuilder> builderClass;
     private static final Map<BuilderType, Class<? extends RowBuilder>> builderStore = Arrays.stream(values())
