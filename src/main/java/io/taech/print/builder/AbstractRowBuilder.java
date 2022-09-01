@@ -14,8 +14,6 @@ import java.util.stream.Stream;
 public abstract class AbstractRowBuilder implements RowBuilder {
 
 
-    protected PrintableFieldManager fieldManager;
-
     protected Supplier<Stream<Object>> streamSupplier;
 
     protected final StringBuilder builder = new StringBuilder();
@@ -29,20 +27,21 @@ public abstract class AbstractRowBuilder implements RowBuilder {
 
     protected PrintOptionAware optionAware;
     private PrintConfigurator configurator;
+    private Class<?> typeClass;
 
     protected void initialize(final Object target, Class<?> typeClass) {
         this.floor = null;
         this.room = null;
         this.streamSupplier = null;
-        this.fieldManager = new DefaultPrintableFieldManager(typeClass);
+        this.typeClass = typeClass;
 
         if (optionAware.isExceptColumn())
-            this.fieldManager.activatePrintableFields(configurator.getActivateIndexes());
+            this.getCurrentFieldManager().activatePrintableFields(configurator.getActivateIndexes());
 
         if(optionAware.hasDateTimeFormat())
             this.optionAware.setDateFormatter(configurator.getDateTimeFormatter());
 
-        if (this.fieldManager.getActivatedFields().length == 0)
+        if (this.getCurrentFieldManager().getActivatedFields().length == 0)
             return;
 
 
@@ -68,11 +67,14 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     private void extractClassInfo(final Object target) {
         if(target instanceof Collection)
             this.streamSupplier = () -> ((Collection) target).stream();
+        else if(target instanceof Map)
+            this.streamSupplier = () -> ((Map) target).entrySet().stream();
         else
             this.streamSupplier = () -> Stream.of(target);
     }
 
     abstract void calculateColumnInfo();
 
+    abstract PrintableFieldManager getCurrentFieldManager();
 
 }

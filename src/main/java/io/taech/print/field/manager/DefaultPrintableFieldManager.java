@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class DefaultPrintableFieldManager implements PrintableFieldManager {
+public class DefaultPrintableFieldManager implements PrintableFieldManager<Integer, Field> {
 
     private Class<?> typeClass;
     private Field [] fields;

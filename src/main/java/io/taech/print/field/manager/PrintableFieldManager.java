@@ -3,11 +3,11 @@ package io.taech.print.field.manager;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public interface PrintableFieldManager {
+public interface PrintableFieldManager<I, F> {
 
-    void activatePrintableFields(List<? extends Object> fieldKeys);
+    void activatePrintableFields(List<I> fieldIndexes);
 
-    Object [] getActivatedFields();
+    F [] getActivatedFields();
 
     Class<?> getTypeClass();
 }

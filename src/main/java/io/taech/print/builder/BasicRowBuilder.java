@@ -2,6 +2,8 @@ package io.taech.print.builder;
 
 import io.taech.constant.Resource;
 import io.taech.print.Column;
+import io.taech.print.field.manager.DefaultPrintableFieldManager;
+import io.taech.print.field.manager.PrintableFieldManager;
 
 import java.lang.reflect.Field;
 import java.time.chrono.ChronoLocalDate;
@@ -18,9 +20,11 @@ import static io.taech.constant.Resource.*;
 public class BasicRowBuilder extends AbstractRowBuilder {
 
 
+    private PrintableFieldManager<Integer, Field> fieldManager;
 
     @Override
     public RowBuilder proceed(final Object target, Class<?> typeClass) {
+        this.fieldManager = new DefaultPrintableFieldManager(typeClass);
         super.initialize(target, typeClass);
         this.setting();
         return this;
@@ -29,7 +33,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     @Override
     public String build() {
         final Supplier<Stream<Column>> columns = () -> super.columns.stream();
-        if(super.fieldManager.getActivatedFields().length == 0)
+        if(this.fieldManager.getActivatedFields().length == 0)
             return builder.append(NO_ACTIVATED).append(Resource.LINEFEED).toString();
 
         super.builder
@@ -52,7 +56,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     @Override
     void calculateColumnInfo() {
-        Arrays.stream(super.fieldManager.getActivatedFields()).forEach(field -> {
+        Arrays.stream(this.fieldManager.getActivatedFields()).forEach(field -> {
             try {
                 field.setAccessible(true);
 
@@ -71,8 +75,8 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
     private void setFieldValues() {
         super.streamSupplier.get()
-                .filter(row -> super.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
-                    final Field [] fields = super.fieldManager.getActivatedFields();
+                .filter(row -> this.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
+                    final Field [] fields = this.fieldManager.getActivatedFields();
                     final Map<String, String> columnMap = new HashMap<>();
 
                     IntStream.range(0, fields.length).forEach(idx -> {
@@ -160,5 +164,10 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         final String empty = String.format(form, EMPTY);
 
         return empty;
+    }
+
+    @Override
+    PrintableFieldManager getCurrentFieldManager() {
+        return this.fieldManager;
     }
 }
