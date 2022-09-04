@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PrintConfigurator {
+public class PrintConfigurator<I> {
 
     private BuilderType builderType;
     private List<PrintOption> options;
-    private List<Integer> activateIndexes;
+    private List<?> activateIndexes;
     private DateTimeFormatter dateTimeFormatter;
 
     public PrintConfigurator() {
@@ -33,7 +33,7 @@ public class PrintConfigurator {
         return this.options;
     }
 
-    public List<Integer> getActivateIndexes() {
+    public List<?> getActivateIndexes() {
         return this.activateIndexes;
     }
 
@@ -44,9 +44,11 @@ public class PrintConfigurator {
         return this;
     }
 
-    public PrintConfigurator activateFields(final Integer... fieldIndexes) {
+    public PrintConfigurator activateFields(final I... fieldIndexes) {
         this.activateIndexes = CommonUtils.isNull(fieldIndexes) ? new ArrayList<>() : Arrays.stream(fieldIndexes)
-                .distinct().sorted().collect(Collectors.toList());
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
 
         return this;
     }

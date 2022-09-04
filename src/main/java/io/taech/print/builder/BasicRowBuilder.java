@@ -70,7 +70,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
             }
         });
 
-        setFieldValues();
+        this.setFieldValues();
     }
 
     private void setFieldValues() {
