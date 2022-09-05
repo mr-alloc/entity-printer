@@ -1,6 +1,7 @@
 package io.taech.print;
 
 import io.taech.constant.PrintOption;
+import io.taech.util.CommonUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public class PrintOptionAware {
     }
 
     private void activate() {
-        if(options.isEmpty())
+        if(CommonUtils.isNull(options) || options.isEmpty())
             return;
 
         options.stream().forEach((o) -> checkOption(o));

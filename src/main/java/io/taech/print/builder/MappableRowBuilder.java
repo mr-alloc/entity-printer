@@ -10,6 +10,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -20,16 +21,15 @@ import static io.taech.constant.Resource.*;
 public class MappableRowBuilder extends AbstractRowBuilder {
 
     private PrintableFieldManager<String, Map.Entry> fieldManager;
+    private Supplier<Stream<Map<String, Object>>> streamSupplier;
 
     @Override
-    public RowBuilder proceed(Object target, Class<?> type) {
-        if( ! (target instanceof Map)) {
-            throw new IllegalArgumentException("Mappable row builder need Object of Map.class.");
-        }
+    public RowBuilder proceed(Object target, Class<?> typeClass) {
 
-        Map<String, Object> temporary = (Map<String, Object>) target;
-        this.fieldManager = new PrintableMapManager(temporary);
-        super.initialize(temporary, type);
+        Map<String, Object> keyModel = getKeyModelWithInitStream(target);
+
+        this.fieldManager = new PrintableMapManager(typeClass, keyModel);
+        super.initialize(keyModel, typeClass);
         this.setting();
         return this;
     }
@@ -98,22 +98,21 @@ public class MappableRowBuilder extends AbstractRowBuilder {
     }
 
     private void setFieldValues() {
-        super.streamSupplier.get()
-                .filter(row -> this.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
-                    Map.Entry[] fields = this.fieldManager.getActivatedFields();
-                    HashMap<String, String> columnMap = new HashMap<>();
+        this.streamSupplier.get().forEach(row -> {
+            Map.Entry<String, Object>[] fields = this.fieldManager.getActivatedFields();
+            HashMap<String, String> columnMap = new HashMap<>();
 
-                    IntStream.range(0, fields.length).forEach(idx -> {
-                        final Map.Entry field = fields[idx];
+            IntStream.range(0, fields.length).forEach(idx -> {
+                final Object field = row.get(fields[idx].getKey());
 
-                        final Column column = columns.get(idx);
-                        final String fieldName = column.getName();
-                        final String strValue = getStringValue(field.getValue(), column);
+                final Column column = super.columns.get(idx);
+                final String fieldName = column.getName();
+                final String strValue = getStringValue(field, column);
 
-                        columnMap.put(fieldName, strValue);
-                    });
-                    super.columnMapList.add(columnMap);
-                });
+                columnMap.put(fieldName, strValue);
+            });
+            super.columnMapList.add(columnMap);
+        });
     }
 
     private String getStringValue(Object value, final Column column) {
@@ -174,6 +173,26 @@ public class MappableRowBuilder extends AbstractRowBuilder {
 
         subBuilder.append(Resource.LINEFEED);
         super.floor = subBuilder.toString();
+    }
+
+    private Map<String, Object> getKeyModelWithInitStream(Object target) {
+        Map<String, Object> keyModel;
+        if(List.class.isAssignableFrom(target.getClass())) {
+            List<Map<String, Object>> mapList = (List<Map<String, Object>>) target;
+            keyModel = mapList.stream().findFirst().orElseThrow(() ->
+                    new IllegalArgumentException("Map object must be has element at least one"));
+
+            this.streamSupplier = () -> mapList.stream();
+
+        } else if(Map.class.isAssignableFrom(target.getClass())) {
+            keyModel = (Map<String, Object>) target;
+
+            this.streamSupplier = () -> Stream.of(keyModel);
+        } else {
+            throw new IllegalArgumentException("Mappable row builder need Object of Map.class.");
+        }
+
+        return keyModel;
     }
 }
 

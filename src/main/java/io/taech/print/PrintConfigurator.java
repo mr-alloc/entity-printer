@@ -19,10 +19,7 @@ public class PrintConfigurator<I> {
     private DateTimeFormatter dateTimeFormatter;
 
     public PrintConfigurator() {
-        this.builderType = BuilderType.DEFAULT;
-    }
-    public PrintConfigurator(final BuilderType builderType) {
-        this.builderType = builderType;
+        builderType(BuilderType.DEFAULT);
     }
 
     public BuilderType getBuilderType() {
@@ -35,6 +32,18 @@ public class PrintConfigurator<I> {
 
     public List<?> getActivateIndexes() {
         return this.activateIndexes;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return this.dateTimeFormatter;
+    }
+
+
+    //== Builder Methods ==//
+
+    public PrintConfigurator builderType(final BuilderType builderType) {
+        this.builderType = builderType;
+        return this;
     }
 
     public PrintConfigurator options(final PrintOption... options) {
@@ -57,9 +66,5 @@ public class PrintConfigurator<I> {
     public PrintConfigurator dateformat(final DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
         return this;
-    }
-
-    public DateTimeFormatter getDateTimeFormatter() {
-        return this.dateTimeFormatter;
     }
 }

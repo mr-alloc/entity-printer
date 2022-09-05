@@ -1,7 +1,10 @@
 package io.taech.print;
 
+import io.taech.constant.BuilderType;
 import io.taech.print.builder.RowBuilderProvider;
 import io.taech.util.CommonUtils;
+
+import java.util.Map;
 
 
 public class EntityPrinter {
@@ -10,13 +13,25 @@ public class EntityPrinter {
         return draw(obj, typeCLass, null);
     }
 
-    public static String draw(final Object obj, final Class<?> typeClass, PrintConfigurator configurator) {
-        if(CommonUtils.isNull(configurator))
-            configurator = new PrintConfigurator();
+    public static String draw(final Object obj, final Class<?> typeClass, final PrintConfigurator configurator) {
+        final PrintConfigurator toBeConfigured = inspectType(typeClass, configurator);
 
         return RowBuilderProvider.getInstance()
-                .provide(configurator)
+                .provide(toBeConfigured)
                 .proceed(obj, typeClass)
                 .build();
+    }
+
+    public static PrintConfigurator inspectType(final Class<?> typeClass, final PrintConfigurator configured) {
+
+        PrintConfigurator configurator = CommonUtils.isNull(configured) ? new PrintConfigurator() : configured;
+
+        if(Map.class.isAssignableFrom(typeClass)) {
+            configurator.builderType(BuilderType.MAP);
+        } else {
+            configurator.builderType(BuilderType.DEFAULT);
+        }
+
+        return configurator;
     }
 }

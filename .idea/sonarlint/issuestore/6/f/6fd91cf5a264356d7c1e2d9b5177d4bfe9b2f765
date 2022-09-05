@@ -1,0 +1,17 @@
+
+E
+java:S3740"/Provide the parametrized type for this generic.(´ÅçÇ
+J
+java:S3740k"/Provide the parametrized type for this generic.(¼Ù¯üÿÿÿÿ
+z
+java:S1488K"]Immediately return this expression instead of assigning it to the temporary variable "empty".(§–Åê8ëµÇ°0
+d
+java:S1612-"BReplace this lambda with method reference 'super.columns::stream'.(ÚÏïœüÿÿÿÿ8¤³Ç°0
+U
+java:S16127"8Replace this lambda with method reference 'coList::get'.(–ô¹‰8‘¤³Ç°0
+O
+java:S1611Ÿ"1Remove the parentheses around the "col" parameter(ı¬‹8ˆÈ®Ç°0
+T
+java:S1611ª"1Remove the parentheses around the "col" parameter(â†á¾üÿÿÿÿ8â°°Ç°0
+M
+java:S1611«"/Remove the parentheses around the "n" parameter(‰¤¬³8â°°Ç°0

@@ -10,13 +10,15 @@ import java.util.stream.Collectors;
 
 public class PrintableMapManager<V> implements PrintableFieldManager<String, Map.Entry> {
 
+    private Class<?> typeClass;
     private Map<String, V> fieldMap;
     private Predicate<V> defaultCondition = (v) -> {
         Class<?> valueType = v.getClass();
         return (valueType.isEnum() || valueType.isPrimitive() || Wrapper.has(valueType.getSimpleName()));
     };
 
-    public PrintableMapManager(Map<String, V> fieldMap) {
+    public PrintableMapManager(final Class<?> typeClass, final Map<String, V> fieldMap) {
+        this.typeClass = typeClass;
         this.fieldMap = fieldMap;
     }
 
@@ -30,12 +32,12 @@ public class PrintableMapManager<V> implements PrintableFieldManager<String, Map
     }
 
     @Override
-    public Map.Entry[] getActivatedFields() {
-        return fieldMap.entrySet().stream().toArray(AbstractMap.SimpleEntry[]::new);
+    public Map.Entry<String, Object>[] getActivatedFields() {
+        return fieldMap.entrySet().stream().toArray(Map.Entry[]::new);
     }
 
     @Override
-    public Class<? extends Map<String, V>> getTypeClass() {
-        return null;
+    public Class<?> getTypeClass() {
+        return this.typeClass;
     }
 }

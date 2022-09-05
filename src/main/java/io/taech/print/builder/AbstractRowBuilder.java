@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 public abstract class AbstractRowBuilder implements RowBuilder {
 
 
-    protected Supplier<Stream<Object>> streamSupplier;
 
     protected final StringBuilder builder = new StringBuilder();
     protected final List<Column> columns = new ArrayList<>();
@@ -32,7 +31,6 @@ public abstract class AbstractRowBuilder implements RowBuilder {
     protected void initialize(final Object target, Class<?> typeClass) {
         this.floor = null;
         this.room = null;
-        this.streamSupplier = null;
         this.typeClass = typeClass;
 
         if (optionAware.isExceptColumn())
@@ -44,8 +42,6 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         if (this.getCurrentFieldManager().getActivatedFields().length == 0)
             return;
 
-
-        extractClassInfo(target);
         this.calculateColumnInfo();
     }
 
@@ -58,19 +54,6 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         this.configurator = configurator;
 
         return this;
-    }
-
-    /**
-     * Check class of target with such as first element of stream
-     * @param target
-     */
-    private void extractClassInfo(final Object target) {
-        if(target instanceof Collection)
-            this.streamSupplier = () -> ((Collection) target).stream();
-        else if(target instanceof Map)
-            this.streamSupplier = () -> ((Map) target).entrySet().stream();
-        else
-            this.streamSupplier = () -> Stream.of(target);
     }
 
     abstract void calculateColumnInfo();

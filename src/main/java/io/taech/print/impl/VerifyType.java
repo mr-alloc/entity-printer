@@ -1,5 +1,6 @@
 package io.taech.print.impl;
 
 public enum VerifyType {
-    EMAIL
+    EMAIL,
+    PHONE
 }

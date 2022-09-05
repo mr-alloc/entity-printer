@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -21,10 +22,13 @@ public class BasicRowBuilder extends AbstractRowBuilder {
 
 
     private PrintableFieldManager<Integer, Field> fieldManager;
+    private Supplier<Stream<Object>> streamSupplier;
 
     @Override
     public RowBuilder proceed(final Object target, Class<?> typeClass) {
         this.fieldManager = new DefaultPrintableFieldManager(typeClass);
+        this.streamSupplier = () ->
+                (Collection.class.isAssignableFrom(target.getClass())) ? ((Collection) target).stream() : Stream.of(target);
         super.initialize(target, typeClass);
         this.setting();
         return this;
@@ -74,7 +78,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
     }
 
     private void setFieldValues() {
-        super.streamSupplier.get()
+        this.streamSupplier.get()
                 .filter(row -> this.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
                     final Field [] fields = this.fieldManager.getActivatedFields();
                     final Map<String, String> columnMap = new HashMap<>();
