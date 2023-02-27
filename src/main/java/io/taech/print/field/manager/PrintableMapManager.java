@@ -12,7 +12,7 @@ public class PrintableMapManager<V> implements PrintableFieldManager<String, Map
 
     private Class<?> typeClass;
     private Map<String, V> fieldMap;
-    private Predicate<V> defaultCondition = (v) -> {
+    private final Predicate<V> DEFAULT_CONDITION = (v) -> {
         Class<?> valueType = v.getClass();
         return (valueType.isEnum() || valueType.isPrimitive() || Wrapper.has(valueType.getSimpleName()));
     };
@@ -26,7 +26,7 @@ public class PrintableMapManager<V> implements PrintableFieldManager<String, Map
     @Override
     public void activatePrintableFields(List<String> fieldIndexes) {
         this.fieldMap = fieldIndexes.stream()
-                .filter(key -> this.fieldMap.containsKey(key) && defaultCondition.test(this.fieldMap.get(key)))
+                .filter(key -> this.fieldMap.containsKey(key) && DEFAULT_CONDITION.test(this.fieldMap.get(key)))
                 .map(key -> new AbstractMap.SimpleEntry<>(key, this.fieldMap.get(key)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

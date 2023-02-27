@@ -7,7 +7,7 @@ public class Column {
     private int length;
     private String name;
     private String type;
-    private boolean nonDataType = false;
+    private boolean nonDataType;
 
     public Column(final String name, final String type, final boolean nonDataType) {
         this.name = name;

@@ -8,10 +8,7 @@ import io.taech.print.field.manager.PrintableFieldManager;
 import java.lang.reflect.Field;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -29,7 +26,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         this.fieldManager = new DefaultPrintableFieldManager(typeClass);
         this.streamSupplier = () ->
                 (Collection.class.isAssignableFrom(target.getClass())) ? ((Collection) target).stream() : Stream.of(target);
-        super.initialize(target, typeClass);
+        super.initialize();
         this.setting();
         return this;
     }
@@ -81,7 +78,7 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         this.streamSupplier.get()
                 .filter(row -> this.fieldManager.getTypeClass().equals(row.getClass())).forEach(row -> {
                     final Field [] fields = this.fieldManager.getActivatedFields();
-                    final Map<String, String> columnMap = new HashMap<>();
+                    final Map<String, String> columnMap = new LinkedHashMap<>();
 
                     IntStream.range(0, fields.length).forEach(idx -> {
                         try {
@@ -135,10 +132,10 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         this.setRoom();
     }
 
-    private void setFloor() {
+    @Override
+    protected void setFloor() {
         final StringBuilder subBuilder = new StringBuilder();
         subBuilder.append(Resource.APEX);
-
         super.columns.stream().forEach((col) -> {
             IntStream.range(0, col.getLength()).forEach((n) -> subBuilder.append(Resource.BRICK));
             subBuilder.append(Resource.APEX);
@@ -148,7 +145,8 @@ public class BasicRowBuilder extends AbstractRowBuilder {
         super.floor = subBuilder.toString();
     }
 
-    private void setRoom() {
+    @Override
+    protected void setRoom() {
         final StringBuilder subBuilder = new StringBuilder();
         super.columns.stream().forEach((col) ->
             subBuilder.append(String.format("%s %%-%ds", Resource.WALL, (col.getLength() - 1))));

@@ -7,9 +7,20 @@ public class Resource {
     private Resource() {}
 
     public static final String APEX = "+";
-    public static final String WALL = "|";
+    public static final byte APEX_BYTE = 43;
+    public static final String WALL = " ";
+    public static final byte WALL_BYTE = 32;
+    public static final String SIDE_WALL = "|";
+    public static final byte SIDE_WALL_BYTE = 124;
     public static final String LINEFEED = "\n";
+    public static final byte LINEFEED_BYTE = 10;
     public static final String BRICK = "-";
+    public static final byte BRICK_BYTE = 45;
+
+    public static final byte PERCENT_BYTE = 37;
+    public static final byte LETTER_S_BYTE = 115;
+    public static final byte LETTER_D_BYTE = 100;
+    public static final byte SPACE_BYTE = 32;
     public static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
     public static final Integer DEFAULT_MAX_LENGTH = 30;
     public static final Integer EACH_SPACE_LENGTH = 2;

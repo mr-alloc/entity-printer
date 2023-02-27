@@ -14,7 +14,7 @@ public enum BuilderType {
     MAP(MappableRowBuilder.class)
     ;
     private Class<? extends RowBuilder> builderClass;
-    private static final Map<BuilderType, Class<? extends RowBuilder>> builderStore = Arrays.stream(values())
+    private static final Map<BuilderType, Class<? extends RowBuilder>> BUILDER_STORE = Arrays.stream(values())
             .collect(Collectors.toMap(Function.identity(), BuilderType::getBuilderClass));
 
     BuilderType(Class<? extends RowBuilder> builderClass) {
@@ -26,7 +26,7 @@ public enum BuilderType {
     }
 
     public static Class<? extends RowBuilder> get(final BuilderType builderType) {
-        return builderStore.get(builderType);
+        return BUILDER_STORE.get(builderType);
     }
 
 }

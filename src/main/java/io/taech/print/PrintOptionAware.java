@@ -5,6 +5,7 @@ import io.taech.util.CommonUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,11 +15,12 @@ public class PrintOptionAware {
     private boolean nonDataType = false;
     private boolean exceptColumn = false;
     private boolean dateTimeFormat = false;
+    private boolean allowMultiline = false;
 
-    private List<PrintOption> options;
+    private Set<PrintOption> options;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
 
-    public PrintOptionAware(final List<PrintOption> options) {
+    public PrintOptionAware(final Set<PrintOption> options) {
         this.options = options;
         activate();
     }
@@ -52,6 +54,9 @@ public class PrintOptionAware {
                 break;
             case DATETIME_FORMAT:
                 this.dateTimeFormat = true;
+                break;
+            case ALLOW_MULTILINE:
+                this.allowMultiline = true;
                 break;
             default:
                 throw new IllegalArgumentException("Not found print option.");

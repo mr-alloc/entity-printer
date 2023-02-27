@@ -35,6 +35,7 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
         this.fields = fieldIndexes.stream()
                 .filter(i -> this.fields.length >= i)
                 .map(i -> this.fields[i -1])
-                .filter(defaultCondition).toArray(Field[]::new);
+                .filter(defaultCondition)
+                .toArray(Field[]::new);
     }
 }

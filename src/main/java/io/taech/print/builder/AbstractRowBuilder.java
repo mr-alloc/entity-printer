@@ -26,15 +26,14 @@ public abstract class AbstractRowBuilder implements RowBuilder {
 
     protected PrintOptionAware optionAware;
     private PrintConfigurator configurator;
-    private Class<?> typeClass;
 
-    protected void initialize(final Object target, Class<?> typeClass) {
+    protected void initialize() {
         this.floor = null;
         this.room = null;
-        this.typeClass = typeClass;
 
-        if (optionAware.isExceptColumn())
+        if (optionAware.isExceptColumn()) {
             this.getCurrentFieldManager().activatePrintableFields(configurator.getActivateIndexes());
+        }
 
         if(optionAware.hasDateTimeFormat())
             this.optionAware.setDateFormatter(configurator.getDateTimeFormatter());
@@ -43,6 +42,8 @@ public abstract class AbstractRowBuilder implements RowBuilder {
             return;
 
         this.calculateColumnInfo();
+        this.setRoom();
+        this.setFloor();
     }
 
     @Override
@@ -56,8 +57,10 @@ public abstract class AbstractRowBuilder implements RowBuilder {
         return this;
     }
 
+    abstract PrintableFieldManager getCurrentFieldManager();
     abstract void calculateColumnInfo();
 
-    abstract PrintableFieldManager getCurrentFieldManager();
 
+    protected abstract void setRoom();
+    protected abstract void setFloor();
 }

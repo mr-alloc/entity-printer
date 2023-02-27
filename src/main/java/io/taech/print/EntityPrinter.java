@@ -1,6 +1,7 @@
 package io.taech.print;
 
 import io.taech.constant.BuilderType;
+import io.taech.constant.PrintOption;
 import io.taech.print.builder.RowBuilderProvider;
 import io.taech.util.CommonUtils;
 
@@ -23,8 +24,9 @@ public class EntityPrinter {
     }
 
     public static PrintConfigurator inspectType(final Class<?> typeClass, final PrintConfigurator configured) {
-
-        PrintConfigurator configurator = CommonUtils.isNull(configured) ? new PrintConfigurator() : configured;
+        PrintConfigurator configurator = CommonUtils.isNull(configured)
+                ? PrintConfigurator.create(BuilderType.DEFAULT)
+                : configured;
 
         if(Map.class.isAssignableFrom(typeClass)) {
             configurator.builderType(BuilderType.MAP);
