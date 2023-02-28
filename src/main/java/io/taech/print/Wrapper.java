@@ -20,12 +20,12 @@ public enum Wrapper {
     LOCAL_DATE("LocalDate", LocalDate.class),
     ;
 
-    private String className;
-    private Class clazz;
+    private final String className;
+    private final Class<?> clazz;
 
-    private static final Map<String, Class> wrapperMap = Arrays.stream(values()).collect(Collectors.toMap(Wrapper::className, Wrapper::clazz));
+    private static final Map<String, Class<?>> wrapperMap = Arrays.stream(values()).collect(Collectors.toMap(Wrapper::className, Wrapper::clazz));
 
-    Wrapper (final String className,final Class clazz) {
+    Wrapper (final String className,final Class<?> clazz) {
         this.className = className;
         this.clazz = clazz;
     }
@@ -34,7 +34,7 @@ public enum Wrapper {
         return this.className;
     }
 
-    public Class clazz() {
+    public Class<?> clazz() {
         return this.clazz;
     }
 

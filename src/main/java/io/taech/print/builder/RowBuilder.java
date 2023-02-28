@@ -1,15 +1,12 @@
 package io.taech.print.builder;
 
-import io.taech.constant.PrintOption;
 import io.taech.print.PrintConfigurator;
 
-import java.util.List;
-
-public interface RowBuilder {
+public interface RowBuilder<I> {
 
     RowBuilder proceed(Object target, Class<?> type);
 
-    RowBuilder config(PrintConfigurator configurator);
+    RowBuilder config(PrintConfigurator<I> configurator);
 
     String build();
 }
