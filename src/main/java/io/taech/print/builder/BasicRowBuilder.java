@@ -30,20 +30,24 @@ public class BasicRowBuilder extends AbstractRowBuilder<Integer> {
     }
 
     @Override
-    void calculateColumnInfo() {
+    protected void calculateColumnInfo() {
         Arrays.stream(this.fieldManager.getActivatedFields()).forEach(field -> {
-            final String fieldName = field.getName();
-            final String name = field.getType().getSimpleName();
+            try {
+                final String fieldName = field.getName();
+                final String name = field.getType().getSimpleName();
 
-            final Column newColumn = new Column(fieldName, name, super.optionAware.isNonDataType());
-            columns.add(newColumn);
+                final Column newColumn = new Column(fieldName, name, super.optionAware.isNonDataType());
+                columns.add(newColumn);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         this.setFieldValues();
     }
 
     @Override
-    PrintableFieldManager getCurrentFieldManager() {
+    protected PrintableFieldManager<Integer, Field> getCurrentFieldManager() {
         return this.fieldManager;
     }
 

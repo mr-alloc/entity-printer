@@ -23,7 +23,7 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
 
 
     @Override
-    void calculateColumnInfo() {
+    protected void calculateColumnInfo() {
         Arrays.stream(this.fieldManager.getActivatedFields()).forEach(entry -> {
             try {
 
@@ -43,7 +43,7 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     }
 
     @Override
-    PrintableFieldManager getCurrentFieldManager() {
+    protected PrintableFieldManager getCurrentFieldManager() {
         return this.fieldManager;
     }
 

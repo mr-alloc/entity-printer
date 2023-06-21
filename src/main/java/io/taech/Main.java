@@ -43,7 +43,6 @@ public class Main {
         PrintConfigurator configurator = PrintConfigurator.create(BuilderType.MAP)
                 .excludeDataType()
                 .allowMultiLine()
-                .activateFields("ID", "GROUP_TYPE")
                 .dateformat(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
 
         final String result = EntityPrinter.draw(historyMapList, HashMap.class, configurator);

@@ -5,6 +5,8 @@ import io.taech.print.Column;
 import io.taech.print.PrintConfigurator;
 import io.taech.print.PrintOptionAware;
 import io.taech.print.field.manager.PrintableFieldManager;
+import io.taech.print.floor.DefaultFloorGenerator;
+import io.taech.print.floor.FloorGenerator;
 import io.taech.util.CommonUtils;
 
 import java.time.chrono.ChronoLocalDate;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 import static io.taech.constant.Resource.*;
 
-public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
+public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
 
 
 
@@ -29,14 +31,20 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     private static final String NO_ACTIVATED_MESSAGE = "There are no Activated fields";
 
     protected PrintOptionAware optionAware;
-    private PrintConfigurator configurator;
+    private PrintConfigurator<INDEX> configurator;
+    private FloorGenerator floorGenerator = new DefaultFloorGenerator();
+
+    protected abstract <FIELD> PrintableFieldManager<INDEX, FIELD> getCurrentFieldManager();
+    protected abstract void calculateColumnInfo();
+
 
     protected void initialize() {
         this.floor = null;
         this.room = null;
 
         if (optionAware.isExceptColumn()) {
-            this.getCurrentFieldManager().activatePrintableFields(this.configurator.getActivateIndexes());
+            List<INDEX> activateIndexes = this.configurator.getActivateIndexes();
+            this.getCurrentFieldManager().activatePrintableFields(activateIndexes);
         }
 
         if(optionAware.hasDateTimeFormat())
@@ -48,10 +56,11 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         this.calculateColumnInfo();
         this.setRoom();
         this.setFloor();
+        floorGenerator.generateSuiteFloor(this.columns);
     }
 
     @Override
-    public RowBuilder config(final PrintConfigurator configurator) {
+    public RowBuilder<INDEX> config(final PrintConfigurator<INDEX> configurator) {
         if(CommonUtils.isNull(configurator))
             return this;
 
@@ -91,13 +100,9 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         return result.toString();
     }
 
-    abstract <I, F> PrintableFieldManager<I, F> getCurrentFieldManager();
-    abstract void calculateColumnInfo();
-
-
     @Override
     public String build() {
-        if(this.getCurrentFieldManager().getActivatedFields().length == 0)
+        if(this.getCurrentFieldManager().hasNoActivateFields())
             return builder.append(NO_ACTIVATED_MESSAGE).append(Resource.LINEFEED).toString();
 
         String[] columnNames = this.columns.stream()

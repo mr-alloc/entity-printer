@@ -7,7 +7,7 @@ public class Resource {
     private Resource() {}
 
     public static final String APEX = "+";
-    public static final String WALL = " ";
+    public static final String WALL = "|";
     public static final String SIDE_WALL = "|";
     public static final String LINEFEED = "\n";
     public static final String BRICK = "-";

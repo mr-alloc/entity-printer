@@ -38,4 +38,9 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
                 .filter(defaultCondition)
                 .toArray(Field[]::new);
     }
+
+    @Override
+    public boolean hasNoActivateFields() {
+        return this.fields.length == 0;
+    }
 }

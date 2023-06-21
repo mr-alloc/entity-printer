@@ -9,16 +9,17 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class PrintableMapManager<V> implements PrintableFieldManager<String, Map.Entry<String, Object>> {
+public class PrintableMapManager<VALUE, WRAPPER> implements PrintableFieldManager<String, Map.Entry<String, Object>> {
 
-    private Class<?> typeClass;
-    private Map<String, V> fieldMap;
-    private final Predicate<V> defaultCondition = v -> {
-        Class<?> valueType = v.getClass();
+    private Class<WRAPPER> typeClass;
+    private Map<String, VALUE> fieldMap;
+    private final Predicate<VALUE> defaultCondition = value -> {
+        Class<?> valueType = value.getClass();
+
         return (valueType.isEnum() || valueType.isPrimitive() || Wrapper.has(valueType.getSimpleName()));
     };
 
-    public PrintableMapManager(final Class<?> typeClass, final Map<String, V> fieldMap) {
+    public PrintableMapManager(final Class<WRAPPER> typeClass, final Map<String, VALUE> fieldMap) {
         this.typeClass = typeClass;
         this.fieldMap = fieldMap;
     }
@@ -35,7 +36,6 @@ public class PrintableMapManager<V> implements PrintableFieldManager<String, Map
                         (a, b) -> a,
                         LinkedHashMap::new
                 ));
-
     }
 
     @Override
@@ -46,5 +46,10 @@ public class PrintableMapManager<V> implements PrintableFieldManager<String, Map
     @Override
     public Class<?> getTypeClass() {
         return this.typeClass;
+    }
+
+    @Override
+    public boolean hasNoActivateFields() {
+        return this.fieldMap.isEmpty();
     }
 }
