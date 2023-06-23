@@ -5,41 +5,64 @@ import io.taech.print.Column;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
 
-public class SuiteFloor implements Floor {
+public class SuiteFloor {
 
-    private List<Column> columns;
-    private String room = "";
-    private String floor = "";
+    private final List<Column> columns;
+    private Room room;
+    private Floor floor;
 
-    private SuiteFloor() {
+
+    private SuiteFloor(List<Column> columns) {
+        this.columns = columns;
     }
 
     public static Builder createWith(List<Column> columns) {
         return new Builder(columns);
     }
 
+    public Room getRoom() {
+        return room;
+    }
+
+    public Floor getFloor() {
+        return this.floor;
+    }
+
+    private String formatting(String[] columnNames) {
+        return this.floor + Resource.LINEFEED +
+                String.format(this.room.toString(), columnNames) + Resource.LINEFEED +
+                this.floor + Resource.LINEFEED;
+    }
+
+    public String getFloorWithNames(String[] columnNames) {
+        return formatting(columnNames);
+    }
+
+    public String getRoomWithValues(String[] columnValues) {
+        return String.format(this.room.toString(), columnValues) + Resource.LINEFEED;
+    }
+
+    public String getFloorString() {
+        return this.floor.toString() + Resource.LINEFEED;
+    }
+
+
     public static class Builder {
 
-        private SuiteFloor suiteFloor;
+        private final SuiteFloor suiteFloor;
+
         private Builder(List<Column> columns) {
-            this.suiteFloor = new SuiteFloor();
-            this.suiteFloor.columns = columns;
+            this.suiteFloor = new SuiteFloor(columns);
         }
 
-        public Builder room(Function<Column, Integer> roomFunction) {
-            this.suiteFloor.room = this.suiteFloor.columns.stream()
-                    .map(roomFunction)
-                    .map(len -> String.format(" %%-%ds ", len - Resource.EACH_SPACE_LENGTH))
-                    .collect(Collectors.joining(Resource.WALL, Resource.SIDE_WALL, Resource.SIDE_WALL));
+        public Builder room(Function<List<Column>, Room> roomFunction) {
+            this.suiteFloor.room = roomFunction.apply(this.suiteFloor.columns);
             return this;
         }
 
         public Builder floor(Function<List<Column>, Floor> floorFunction) {
-            this.suiteFloor.floor = floorFunction.apply(this.suiteFloor.columns).toString();
+            this.suiteFloor.floor = floorFunction.apply(this.suiteFloor.columns);
             return this;
         }
 

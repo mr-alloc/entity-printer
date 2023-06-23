@@ -8,9 +8,9 @@ import java.util.function.Predicate;
 
 public class DefaultPrintableFieldManager implements PrintableFieldManager<Integer, Field> {
 
-    private Class<?> typeClass;
-    private Field [] fields;
-    private Predicate<Field> defaultCondition = (field) ->
+    private final Class<?> typeClass;
+    private Field[] fields;
+    private final Predicate<Field> DEFAULT_CONDITION = (field) ->
             (field.getType().isEnum() || field.getType().isPrimitive() || Wrapper.has(field.getType().getSimpleName()));
 
 
@@ -34,8 +34,8 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
 
         this.fields = fieldIndexes.stream()
                 .filter(i -> this.fields.length >= i)
-                .map(i -> this.fields[i -1])
-                .filter(defaultCondition)
+                .map(i -> this.fields[i - 1])
+                .filter(DEFAULT_CONDITION)
                 .toArray(Field[]::new);
     }
 

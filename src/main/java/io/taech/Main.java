@@ -1,12 +1,9 @@
 package io.taech;
 
-import io.taech.constant.BuilderType;
-import io.taech.constant.PrintOption;
 import io.taech.print.EntityPrinter;
 import io.taech.print.PrintConfigurator;
 import io.taech.print.impl.VerifyType;
 
-import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -40,9 +37,11 @@ public class Main {
         historyMapList.add(historyMap);
         historyMapList.add(historyMap2);
 
-        PrintConfigurator configurator = PrintConfigurator.create(BuilderType.MAP)
+        PrintConfigurator configurator = PrintConfigurator.create()
                 .excludeDataType()
                 .allowMultiLine()
+                .activateFields("GROUP_TYPE", "SEND_TIME")
+                .withoutFloor()
                 .dateformat(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
 
         final String result = EntityPrinter.draw(historyMapList, HashMap.class, configurator);

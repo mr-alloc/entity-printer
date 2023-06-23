@@ -9,14 +9,15 @@ public class RowBuilderProvider {
 
     private static RowBuilderProvider provider = new RowBuilderProvider();
 
-    private RowBuilderProvider() {}
+    private RowBuilderProvider() {
+    }
 
     public static RowBuilderProvider getInstance() {
         return provider;
     }
 
-    public RowBuilder provide(final PrintConfigurator configurator) {
-        RowBuilder rowBuilder = null;
+    public <I> RowBuilder<I> provide(final PrintConfigurator<I> configurator) {
+        RowBuilder<I> rowBuilder = null;
         try {
 
             final Class<? extends RowBuilder> clazz = BuilderType.get(configurator.getBuilderType());

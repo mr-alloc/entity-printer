@@ -10,6 +10,5 @@ public interface PrintableFieldManager<I, F> {
 
     Class<?> getTypeClass();
 
-
     boolean hasNoActivateFields();
 }

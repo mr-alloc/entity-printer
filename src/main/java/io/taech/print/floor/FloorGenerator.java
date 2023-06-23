@@ -5,5 +5,7 @@ import io.taech.print.Column;
 import java.util.List;
 
 public interface FloorGenerator {
-    SuiteFloor generateSuiteFloor(List<Column> columns);
+    void generateSuiteFloor(List<Column> columns);
+
+    SuiteFloor getSuiteFloor();
 }

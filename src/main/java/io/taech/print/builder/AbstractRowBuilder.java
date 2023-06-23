@@ -2,11 +2,13 @@ package io.taech.print.builder;
 
 import io.taech.constant.Resource;
 import io.taech.print.Column;
+import io.taech.print.ColumnValue;
 import io.taech.print.PrintConfigurator;
 import io.taech.print.PrintOptionAware;
 import io.taech.print.field.manager.PrintableFieldManager;
 import io.taech.print.floor.DefaultFloorGenerator;
 import io.taech.print.floor.FloorGenerator;
+import io.taech.print.floor.SuiteFloor;
 import io.taech.util.CommonUtils;
 
 import java.time.chrono.ChronoLocalDate;
@@ -17,8 +19,7 @@ import java.util.Map;
 
 import static io.taech.constant.Resource.*;
 
-public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
-
+public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
 
     protected final StringBuilder builder = new StringBuilder();
@@ -30,11 +31,12 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
     private static final String EMPTY_MESSAGE = "empty";
     private static final String NO_ACTIVATED_MESSAGE = "There are no Activated fields";
 
+    private final FloorGenerator floorGenerator = new DefaultFloorGenerator();
     protected PrintOptionAware optionAware;
-    private PrintConfigurator<INDEX> configurator;
-    private FloorGenerator floorGenerator = new DefaultFloorGenerator();
+    private PrintConfigurator<I> configurator;
 
-    protected abstract <FIELD> PrintableFieldManager<INDEX, FIELD> getCurrentFieldManager();
+    protected abstract <F> PrintableFieldManager<I, F> getCurrentFieldManager();
+
     protected abstract void calculateColumnInfo();
 
 
@@ -43,25 +45,24 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
         this.room = null;
 
         if (optionAware.isExceptColumn()) {
-            List<INDEX> activateIndexes = this.configurator.getActivateIndexes();
-            this.getCurrentFieldManager().activatePrintableFields(activateIndexes);
+            List<I> activateIS = this.configurator.getActivateIndexes();
+            this.getCurrentFieldManager().activatePrintableFields(activateIS);
         }
 
         if(optionAware.hasDateTimeFormat())
             this.optionAware.setDateFormatter(this.configurator.getDateTimeFormatter());
 
-        if (this.getCurrentFieldManager().getActivatedFields().length == 0)
+        if (this.getCurrentFieldManager().hasNoActivateFields())
             return;
 
+        // 컬럼 정보 세팅
         this.calculateColumnInfo();
-        this.setRoom();
-        this.setFloor();
         floorGenerator.generateSuiteFloor(this.columns);
     }
 
     @Override
-    public RowBuilder<INDEX> config(final PrintConfigurator<INDEX> configurator) {
-        if(CommonUtils.isNull(configurator))
+    public RowBuilder<I> config(final PrintConfigurator<I> configurator) {
+        if (CommonUtils.isNull(configurator))
             return this;
 
         this.optionAware = new PrintOptionAware(configurator.getOptions());
@@ -71,20 +72,26 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
     }
 
     protected final String getStringValue(Object value, final Column column) {
-        if (value == null) value = "(null)";
+        if (value == null) value = NULL_VALUE;
 
         String strValue = typeControl(value).replaceAll(IGNORE_LETTER, " ");
-        Integer lengthOfValue = strValue.length();
+        ColumnValue columnValue = new ColumnValue(typeControl(value));
+        Integer lengthOfValue = columnValue.getLineLength();
 
-        if (lengthOfValue > DEFAULT_MAX_LENGTH) {
-            strValue = String.format("%s" + TRIPLE_DOT, strValue.substring(0, (DEFAULT_MAX_LENGTH - TRIPLE_DOT.length())));
-            lengthOfValue = DEFAULT_MAX_LENGTH;
+        if (optionAware.isAllowMultiline()) {
+
+        } else {
+
+            if (lengthOfValue > DEFAULT_MAX_LENGTH_PER_LINE) {
+                strValue = columnValue.getFirstLine().substring(0, (DEFAULT_MAX_LENGTH_PER_LINE - ELLIPSIS.length())) + ELLIPSIS;
+                lengthOfValue = DEFAULT_MAX_LENGTH_PER_LINE;
+            }
+
         }
 
         column.setLength(Math.max(column.getLength(), (lengthOfValue + EACH_SPACE_LENGTH)));
 
         return strValue;
-
     }
 
     private String typeControl(Object value) {
@@ -102,7 +109,7 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
 
     @Override
     public String build() {
-        if(this.getCurrentFieldManager().hasNoActivateFields())
+        if (this.getCurrentFieldManager().hasNoActivateFields())
             return builder.append(NO_ACTIVATED_MESSAGE).append(Resource.LINEFEED).toString();
 
         String[] columnNames = this.columns.stream()
@@ -110,25 +117,34 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
                 .toArray(String[]::new);
 
         // 컬럼명 세팅
-        this.builder
-                .append(join(LINEFEED, this.floor))
-                .append(String.format(this.room, columnNames))
-                .append(this.floor);
+        SuiteFloor suiteFloor = this.floorGenerator.getSuiteFloor();
+        this.builder.append(suiteFloor.getFloorWithNames(columnNames));
 
-        // 컬럼 값 세팅
-        for (Map<String, String> columnMap : this.columnMapList) {
-            String[] columnValues = this.columns.stream()
-                    .map(column -> columnMap.get(column.getName()))
-                    .toArray(String[]::new);
-
-            this.builder.append(String.format(this.room, columnValues)).append(this.floor);
-        }
+        this.setColumnValues();
 
         if (columnMapList.isEmpty())
             this.builder.append(emptyFloor()).append(this.floor);
 
-
         return this.builder.toString();
+    }
+
+    private void setColumnValues() {
+        SuiteFloor suiteFloor = this.floorGenerator.getSuiteFloor();
+        if (this.optionAware.isAllowMultiline()) {
+
+            return;
+        }
+        // 컬럼 값 세팅
+        for (int i = 0; i < this.columnMapList.size(); i++) {
+            Map<String, String> columnMap = this.columnMapList.get(i);
+            String[] columnValues = CommonUtils.columnValuesOf(this.columns, (col) -> columnMap.get(col.getName()));
+            this.builder.append(suiteFloor.getRoomWithValues(columnValues));
+
+            if (optionAware.isWithoutFloor() && (i != this.columnMapList.size() - 1)) {
+                continue;
+            }
+            this.builder.append(suiteFloor.getFloorString());
+        }
     }
 
 
@@ -144,37 +160,5 @@ public abstract class AbstractRowBuilder<INDEX> implements RowBuilder<INDEX> {
                 SIDE_WALL, LINEFEED);
 
         return String.format(form, EMPTY_MESSAGE);
-    }
-
-    /**
-     * 데이터(컬럼 명 또는 값)(이)가 들어갈 Room 세팅
-     */
-    private void setRoom() {
-        final StringBuilder subBuilder = new StringBuilder().append(SIDE_WALL);
-        for (int i = 0;i < this.columns.size();i++) {
-            Integer len = this.columns.get(i).getLength() - 1;
-            if (i == 0) {
-                subBuilder.append(String.format(" %%-%ds", len));
-                continue;
-            }
-            subBuilder.append(String.format("%s %%-%ds", WALL, len));
-        }
-
-        this.room = subBuilder.append(SIDE_WALL).append(LINEFEED).toString();
-    }
-
-    /**
-     * +--+ 같은 층 정보 세팅
-     */
-    private void setFloor() {
-        final StringBuilder subBuilder = new StringBuilder().append(APEX);
-        for (Column col : this.columns) {
-            for(int i = 0;i < col.getLength();i++) {
-                subBuilder.append(BRICK);
-            }
-            subBuilder.append(APEX);
-        }
-
-        this.floor = subBuilder.append(LINEFEED).toString();
     }
 }

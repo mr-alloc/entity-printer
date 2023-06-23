@@ -4,29 +4,33 @@ import io.taech.constant.BuilderType;
 import io.taech.constant.PrintOption;
 import io.taech.util.CommonUtils;
 
-import java.lang.reflect.Field;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PrintConfigurator<I> {
 
+    private final Set<PrintOption> options;
     private BuilderType builderType;
-    private Set<PrintOption> options;
     private List<I> activateIndexes;
     private DateTimeFormatter dateTimeFormatter;
 
     private PrintConfigurator() {
-        builderType(BuilderType.DEFAULT);
+        this.builderType = BuilderType.DEFAULT;
         this.options = new HashSet<>();
     }
 
-    public static  <I> PrintConfigurator<I> create(BuilderType builderType) {
-        PrintConfigurator<I> configurator = new PrintConfigurator<>();
-        configurator.options = new HashSet<>();
-        configurator.builderType = builderType;
+    private PrintConfigurator(BuilderType builderType) {
+        this.builderType = builderType;
+        this.options = new HashSet<>();
+    }
 
-        return configurator;
+    public static <I> PrintConfigurator<I> create(BuilderType builderType) {
+        return new PrintConfigurator<>(builderType);
+    }
+
+    public static <I> PrintConfigurator<I> create() {
+        return new PrintConfigurator<>(BuilderType.DEFAULT);
     }
 
     public BuilderType getBuilderType() {
@@ -45,20 +49,17 @@ public class PrintConfigurator<I> {
         return this.dateTimeFormatter;
     }
 
-
-    //== Builder Methods ==//
-
-    public PrintConfigurator builderType(final BuilderType builderType) {
+    public PrintConfigurator<I> builderType(final BuilderType builderType) {
         this.builderType = builderType;
         return this;
     }
 
-    public PrintConfigurator excludeDataType() {
+    public PrintConfigurator<I> excludeDataType() {
         this.options.add(PrintOption.NO_DATA_TYPE);
         return this;
     }
 
-    public PrintConfigurator activateFields(final I... fieldIndexes) {
+    public PrintConfigurator<I> activateFields(final I... fieldIndexes) {
         this.activateIndexes = CommonUtils.isNull(fieldIndexes) ? new ArrayList<>() : Arrays.stream(fieldIndexes)
                 .distinct()
                 .sorted()
@@ -68,14 +69,19 @@ public class PrintConfigurator<I> {
     }
 
 
-    public PrintConfigurator dateformat(final DateTimeFormatter dateTimeFormatter) {
+    public PrintConfigurator<I> dateformat(final DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
         this.options.add(PrintOption.DATETIME_FORMAT);
         return this;
     }
 
-    public PrintConfigurator allowMultiLine() {
+    public PrintConfigurator<I> allowMultiLine() {
         this.options.add(PrintOption.ALLOW_MULTILINE);
+        return this;
+    }
+
+    public PrintConfigurator<I> withoutFloor() {
+        this.options.add(PrintOption.WITHOUT_FLOOR);
         return this;
     }
 }

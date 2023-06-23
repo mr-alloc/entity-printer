@@ -1,16 +1,15 @@
 package io.taech.constant;
 
-import java.util.StringJoiner;
-
 public class Resource {
 
     private Resource() {}
 
     public static final String APEX = "+";
-    public static final String WALL = "|";
+    public static final String INNER_WALL = " ";
     public static final String SIDE_WALL = "|";
     public static final String LINEFEED = "\n";
     public static final String BRICK = "-";
+    public static final String NULL_VALUE = "(null)";
 
     public static final byte APEX_BYTE = 43;
     public static final byte WALL_BYTE = 32;
@@ -23,14 +22,14 @@ public class Resource {
     public static final byte SPACE_BYTE = 32;
 
     public static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
-    public static final String TRIPLE_DOT = "...";
-    public static final Integer DEFAULT_MAX_LENGTH = 30;
+    public static final String ELLIPSIS = "...";
+    public static final Integer DEFAULT_MAX_LENGTH_PER_LINE = 30;
     public static final Integer EACH_SPACE_LENGTH = 2;
 
     public static String join(final String... strings) {
         final StringBuilder builder = new StringBuilder();
 
-        for(String str : strings)
+        for (String str : strings)
             builder.append(str);
 
         return builder.toString();

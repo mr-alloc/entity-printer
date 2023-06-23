@@ -6,15 +6,19 @@ import java.util.List;
 
 public class DefaultFloorGenerator implements FloorGenerator {
 
-    @Override
-    public SuiteFloor generateSuiteFloor(List<Column> columns) {
+    private SuiteFloor suiteFloor;
 
-        //SIDE_WALL
-        SuiteFloor.createWith(columns)
-                .room(Column::getLength)
+    @Override
+    public void generateSuiteFloor(List<Column> columns) {
+
+        this.suiteFloor = SuiteFloor.createWith(columns)
+                .room(FloorOption.defaultRoom())
                 .floor(FloorOption.defaultFloor())
                 .build();
-        return null;
     }
 
+    @Override
+    public SuiteFloor getSuiteFloor() {
+        return this.suiteFloor;
+    }
 }

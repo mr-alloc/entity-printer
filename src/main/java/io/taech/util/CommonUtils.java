@@ -1,26 +1,48 @@
 package io.taech.util;
 
-import java.util.function.Consumer;
+import io.taech.constant.Resource;
+import io.taech.print.Column;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class CommonUtils {
+public interface CommonUtils {
 
-    private CommonUtils() {}
 
-    public static boolean isNull(final Object target) {
+    static boolean isNull(final Object target) {
 
         return (target == null);
     }
 
-    public static boolean isNotNull(final Object target) {
+    static boolean isNotNull(final Object target) {
 
-        return (! isNull(target));
+        return (!isNull(target));
     }
 
-    public static void ifNull(final Object target, final Supplier<RuntimeException> behavior) {
+    static void ifNull(final Object target, final Supplier<RuntimeException> behavior) {
 
-        if(isNull(target))
+        if (isNull(target))
             throw behavior.get();
     }
 
+    static String[] columnValuesOf(List<Column> columns, Function<Column, String> columnNameSupplier) {
+        return columns.stream()
+                .map(columnNameSupplier)
+                .toArray(String[]::new);
+    }
+
+    static void getWithSeparate(String[] lines, BiConsumer<Integer, Integer> valueConsumer) {
+        int maxLength = 0;
+        for (String line : lines) {
+            maxLength = Math.max(maxLength, line.length());
+        }
+
+        valueConsumer.accept(lines.length, maxLength);
+    }
+
+    static String[] separateWithLineFeed(String original) {
+        return original.split(Resource.LINEFEED);
+    }
 }

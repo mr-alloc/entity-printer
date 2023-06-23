@@ -4,11 +4,7 @@ import io.taech.constant.PrintOption;
 import io.taech.util.CommonUtils;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class PrintOptionAware {
 
@@ -16,8 +12,9 @@ public class PrintOptionAware {
     private boolean exceptColumn = false;
     private boolean dateTimeFormat = false;
     private boolean allowMultiline = false;
+    private boolean withoutFloor = false;
 
-    private Set<PrintOption> options;
+    private final Set<PrintOption> options;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
 
     public PrintOptionAware(final Set<PrintOption> options) {
@@ -37,11 +34,19 @@ public class PrintOptionAware {
         return this.dateTimeFormat;
     }
 
+    public boolean isAllowMultiline() {
+        return this.allowMultiline;
+    }
+
+    public boolean isWithoutFloor() {
+        return this.withoutFloor;
+    }
+
     private void activate() {
-        if(CommonUtils.isNull(options) || options.isEmpty())
+        if (CommonUtils.isNull(options) || options.isEmpty())
             return;
 
-        options.stream().forEach((o) -> checkOption(o));
+        options.forEach(this::checkOption);
     }
 
     public void checkOption(final PrintOption option) {
@@ -57,6 +62,9 @@ public class PrintOptionAware {
                 break;
             case ALLOW_MULTILINE:
                 this.allowMultiline = true;
+                break;
+            case WITHOUT_FLOOR:
+                this.withoutFloor = true;
                 break;
             default:
                 throw new IllegalArgumentException("Not found print option.");
