@@ -11,10 +11,12 @@ import io.taech.print.floor.FloorGenerator;
 import io.taech.print.floor.SuiteFloor;
 import io.taech.util.CommonUtils;
 
+import java.nio.ByteBuffer;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import static io.taech.constant.Resource.*;
@@ -39,17 +41,17 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
     protected abstract void calculateColumnInfo();
 
+    private ByteBuffer byteBuffer;
+
 
     protected void initialize() {
-        this.floor = null;
-        this.room = null;
 
         if (optionAware.isExceptColumn()) {
-            List<I> activateIS = this.configurator.getActivateIndexes();
-            this.getCurrentFieldManager().activatePrintableFields(activateIS);
+            List<I> activateIndices = this.configurator.getActivateIndexes();
+            this.getCurrentFieldManager().activatePrintableFields(activateIndices);
         }
 
-        if(optionAware.hasDateTimeFormat())
+        if (optionAware.hasDateTimeFormat())
             this.optionAware.setDateFormatter(this.configurator.getDateTimeFormatter());
 
         if (this.getCurrentFieldManager().hasNoActivateFields())
@@ -57,7 +59,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
         // 컬럼 정보 세팅
         this.calculateColumnInfo();
-        floorGenerator.generateSuiteFloor(this.columns);
+        floorGenerator.generateSuiteFloor(this.columns, this.columnMapList.size());
     }
 
     @Override
@@ -79,7 +81,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         Integer lengthOfValue = columnValue.getLineLength();
 
         if (optionAware.isAllowMultiline()) {
-
+            // multi line 대응 행, 열 길이 계산
         } else {
 
             if (lengthOfValue > DEFAULT_MAX_LENGTH_PER_LINE) {
@@ -124,35 +126,39 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
         if (columnMapList.isEmpty())
             this.builder.append(emptyFloor()).append(this.floor);
-
-        return this.builder.toString();
+        suiteFloor.toByteBuffer();
+        String result = this.builder.toString();
+        System.out.println("actual totalSize= " + result.length());
+        return result;
     }
 
     private void setColumnValues() {
         SuiteFloor suiteFloor = this.floorGenerator.getSuiteFloor();
         if (this.optionAware.isAllowMultiline()) {
-
             return;
         }
         // 컬럼 값 세팅
-        for (int i = 0; i < this.columnMapList.size(); i++) {
-            Map<String, String> columnMap = this.columnMapList.get(i);
-            String[] columnValues = CommonUtils.columnValuesOf(this.columns, (col) -> columnMap.get(col.getName()));
+        ListIterator<Map<String, String>> mapListIterator = this.columnMapList.listIterator();
+
+        while (mapListIterator.hasNext()) {
+            Map<String, String> next = mapListIterator.next();
+            String[] columnValues = CommonUtils.columnValuesOf(this.columns, col -> next.get(col.getName()));
             this.builder.append(suiteFloor.getRoomWithValues(columnValues));
 
-            if (optionAware.isWithoutFloor() && (i != this.columnMapList.size() - 1)) {
+            if (optionAware.isWithoutFloor() && (mapListIterator.hasNext())) {
                 continue;
             }
             this.builder.append(suiteFloor.getFloorString());
         }
     }
 
-
     /**
      * @return 빈데이터를 위한 Empty Floor
      */
     private String emptyFloor() {
-        int floorLength = this.floor.length() - 4 <= 0 ? 6 : this.floor.length() - 4;
+        int floorLength = this.floor.length() - 4 <= 0
+                ? 6
+                : this.floor.length() - 4;
 
         final String form = join(
                 SIDE_WALL, " %-",
