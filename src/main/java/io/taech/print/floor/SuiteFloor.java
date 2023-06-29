@@ -3,7 +3,6 @@ package io.taech.print.floor;
 import io.taech.constant.Resource;
 import io.taech.print.Column;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.function.Function;
 
@@ -12,7 +11,6 @@ public class SuiteFloor {
     private final List<Column> columns;
     private Room room;
     private Floor floor;
-    private int bufferSize;
 
 
     private SuiteFloor(List<Column> columns) {
@@ -51,30 +49,6 @@ public class SuiteFloor {
 
     public String getFloorString() {
         return this.floor.toString() + Resource.LINEFEED;
-    }
-
-    public ByteBuffer toByteBuffer() {
-        ByteBuffer buffer = ByteBuffer.allocate(this.bufferSize);
-        return null;
-    }
-
-    public void calculateBufferSize(int size) {
-        // 헤더 길이 ByteBuffer.allocate() 용도
-        int sumFloor = this.columns.stream().mapToInt(Column::getLength).sum();
-        int divider = this.columns.size() + 1;
-
-        int floorSize = (sumFloor + divider) * 3;
-
-        int sumRoom = this.columns.stream().mapToInt(column -> column.getLength() + 2).sum();
-        int divider2 = this.columns.size() + 1;
-
-        int roomSize = (sumRoom + divider2) * (size + 1);
-        System.out.println("expected roomSize = " + roomSize);
-
-        int feedSize = size + 5;
-
-        int totalSize = floorSize + roomSize + feedSize;
-        System.out.println("expecred totalSize = " + totalSize);
     }
 
 

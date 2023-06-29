@@ -14,8 +14,6 @@ public class DefaultFloorGenerator implements FloorGenerator {
                 .room(FloorOption.defaultRoom())
                 .floor(FloorOption.defaultFloor())
                 .build();
-
-        this.suiteFloor.calculateBufferSize(size);
     }
 
     @Override

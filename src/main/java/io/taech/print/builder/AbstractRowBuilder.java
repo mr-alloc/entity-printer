@@ -11,7 +11,6 @@ import io.taech.print.floor.FloorGenerator;
 import io.taech.print.floor.SuiteFloor;
 import io.taech.util.CommonUtils;
 
-import java.nio.ByteBuffer;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
@@ -40,8 +39,6 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     protected abstract <F> PrintableFieldManager<I, F> getCurrentFieldManager();
 
     protected abstract void calculateColumnInfo();
-
-    private ByteBuffer byteBuffer;
 
 
     protected void initialize() {
@@ -126,10 +123,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
         if (columnMapList.isEmpty())
             this.builder.append(emptyFloor()).append(this.floor);
-        suiteFloor.toByteBuffer();
-        String result = this.builder.toString();
-        System.out.println("actual totalSize= " + result.length());
-        return result;
+        return this.builder.toString();
     }
 
     private void setColumnValues() {

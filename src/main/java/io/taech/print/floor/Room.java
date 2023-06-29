@@ -20,10 +20,8 @@ public class Room {
 
     @Override
     public String toString() {
-        String collect = this.eachColumns.stream()
+        return this.eachColumns.stream()
                 .map(column -> String.format(ROOM_FORMAT, column.getLength() - Resource.EACH_SPACE_LENGTH))
                 .collect(Collectors.joining(Resource.INNER_WALL, Resource.SIDE_WALL, Resource.SIDE_WALL));
-
-        return collect;
     }
 }
