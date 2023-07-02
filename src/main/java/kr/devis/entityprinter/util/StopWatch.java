@@ -26,16 +26,12 @@ public class StopWatch {
         if(CommonUtils.isNull(this.startTime))
             throw new NullPointerException("Start time cannot be null. Please use stopWatch.start() first.");
 
-        Long oldTime;
-
-        if(moments.isEmpty())
-            oldTime = startTime;
-        else
-            oldTime = moments.peek().getMillis();
+        Long oldTime = moments.isEmpty()
+                ? startTime
+                : moments.peek().getMillis();
 
         final Long executionTime = (System.currentTimeMillis() - oldTime);
         this.moments.add(new Moment(executionTime, message));
-
     }
 
     public String getResult() {
