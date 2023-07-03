@@ -34,14 +34,10 @@ public class StopWatch {
         this.moments.add(new Moment(executionTime, message));
     }
 
-    public String getResult() {
-        final RowBuilder builder = new BasicRowBuilder();
-        final List<Record> records = IntStream.range(0, moments.size()).mapToObj((idx) -> {
+    public List<Record> getResult() {
+        return IntStream.range(0, moments.size()).mapToObj((idx) -> {
             final Moment moment = moments.get(idx);
             return new Record(idx + 1, moment.getMessage(), String.format("%4.4f sec",(moment.getMillis() / 1000.f)));
         }).collect(Collectors.toList());
-
-        return builder.proceed(records, Record.class)
-                .build();
     }
 }

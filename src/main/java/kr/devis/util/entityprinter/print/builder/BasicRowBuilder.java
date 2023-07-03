@@ -60,7 +60,7 @@ public class BasicRowBuilder extends AbstractRowBuilder<Integer> {
                     IntStream.range(0, fields.length).forEach(idx -> {
                         try {
                             final Field field = fields[idx];
-
+                            field.setAccessible(true);
                             final Column column = columns.get(idx);
                             final String fieldName = field.getName();
                             final String strValue = getStringValue(field.get(row), column);

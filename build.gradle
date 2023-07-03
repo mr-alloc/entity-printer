@@ -16,12 +16,6 @@ apply from: 'publish-info.gradle'
 ext {
     projectEncoding = 'UTF-8'
 
-    signing {
-        keyId = System.getenv("GPG_KEY_ID")
-        password = System.getenv("GPG_KEY_PASSWORD")
-        secretKeyRingFile = System.getenv("GPG_KEY_FILE")
-    }
-
     ossrhUsername = System.getenv("OSSRH_USERNAME")
     ossrhPassword = System.getenv("OSSRH_PASSWORD")
 }
