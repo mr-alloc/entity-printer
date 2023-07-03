@@ -3,6 +3,7 @@ buildscript {
         classpath 'io.github.gradle-nexus:publish-plugin:1.2.0'
     }
 }
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -10,10 +11,11 @@ plugins {
 }
 
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply from: 'publish-info.gradle'
 
 ext {
-
     projectEncoding = 'UTF-8'
+
     signing {
         keyId = System.getenv("GPG_KEY_ID")
         password = System.getenv("GPG_KEY_PASSWORD")
@@ -22,21 +24,8 @@ ext {
 
     ossrhUsername = System.getenv("OSSRH_USERNAME")
     ossrhPassword = System.getenv("OSSRH_PASSWORD")
-
-    PUBLISH_GROUP_ID = 'kr.devis.entityprinter'
-    PUBLISH_VERSION = '1.0.0-SNAPSHOT'
-    PUBLISH_ARTIFACT_ID = 'entity-printer'
-    PUBLISH_DESCRIPTION = 'Simple Entity Printer'
-    PUBLISH_URL = 'https://github.com/devisitem/entity-printer'
-    PUBLISH_LICENSE_NAME = 'The Apache License, Version 2.0'
-    PUBLISH_LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    PUBLISH_DEVELOPER_ID = 'devisitem'
-    PUBLISH_DEVELOPER_NAME = 'Tae Gu Jeon'
-    PUBLISH_DEVELOPER_EMAIL = 'devisitem@gmail.com'
-    PUBLISH_SCM_CONNECTION = 'scm:git:github.com/devisitem/entity-printer.git'
-    PUBLISH_SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com:devisitem/entity-printer.git'
-    PUBLISH_SCM_URL = 'https://github.com/devisitem/entity-printer/tree/master'
 }
+
 repositories {
     mavenCentral()
 }
@@ -125,12 +114,6 @@ artifacts {
 
 signing {
     sign publishing.publications.mavenJava
-}
-
-javadoc {
-    if (JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
 }
 
 // 컴파일 인코딩 설정
