@@ -11,5 +11,5 @@ ext {
     PUBLISH_DEVELOPER_EMAIL = 'devisitem@gmail.com'
     PUBLISH_SCM_CONNECTION = 'scm:git:github.com/devisitem/entity-printer.git'
     PUBLISH_SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com:devisitem/entity-printer.git'
-    PUBLISH_SCM_URL = 'https://github.com/devisitem/entity-printer/tree/master'
+    PUBLISH_SCM_URL = 'https://github.com/devisitem/entity-printer'
 }

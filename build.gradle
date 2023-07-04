@@ -23,6 +23,9 @@ repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
+java {
+    withSourcesJar()
+}
 
 publishing {
     publications {
@@ -69,16 +72,14 @@ publishing {
     }
     repositories {
         maven {
-            name = 'OSSRH'
             credentials {
-                username = ossrhUsername ?: ""
-                password = ossrhPassword ?: ""
+                username = ossrhUsername ?: "devisitem"
+                password = ossrhPassword ?: "Shwm250s4138!"
             }
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
 
-//            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-//            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
-//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
 }
