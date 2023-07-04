@@ -1,16 +1,9 @@
-buildscript {
-    dependencies {
-        classpath 'io.github.gradle-nexus:publish-plugin:1.2.0'
-    }
-}
-
 plugins {
     id 'java'
     id 'maven-publish'
     id 'signing'
 }
 
-apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply from: 'publish-info.gradle'
 
 ext {
@@ -20,11 +13,16 @@ ext {
     ossrhPassword = System.getenv("OSSRH_PASSWORD")
 }
 
+// Util Group
+group'kr.devis.util'
+version PUBLISH_VERSION
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+
 repositories {
     mavenCentral()
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications {
@@ -71,38 +69,18 @@ publishing {
     }
     repositories {
         maven {
-            allowInsecureProtocol true
-            name = 'sonatype'
+            name = 'OSSRH'
             credentials {
                 username = ossrhUsername ?: ""
                 password = ossrhPassword ?: ""
             }
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 
-            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+//            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = "devisitem"
-            password = "Shwm250s4138!"
-        }
-    }
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
 }
 
 

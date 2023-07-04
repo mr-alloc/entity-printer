@@ -63,7 +63,7 @@ public class PrintOptionAware {
             case ALLOW_MULTILINE:
                 this.allowMultiline = true;
                 break;
-            case WITHOUT_FLOOR:
+            case WITHOUT_EACH_BORDER_BOTTOM:
                 this.withoutFloor = true;
                 break;
             default:

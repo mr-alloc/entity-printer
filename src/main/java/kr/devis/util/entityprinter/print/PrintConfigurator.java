@@ -81,7 +81,7 @@ public class PrintConfigurator<I> {
     }
 
     public PrintConfigurator<I> withoutFloor() {
-        this.options.add(PrintOption.WITHOUT_FLOOR);
+        this.options.add(PrintOption.WITHOUT_EACH_BORDER_BOTTOM);
         return this;
     }
 }
