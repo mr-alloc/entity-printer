@@ -20,7 +20,6 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
-    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 java {
@@ -73,14 +72,17 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = ossrhUsername ?: "devisitem"
-                password = ossrhPassword ?: "Shwm250s4138!"
+                username = ossrhUsername ?: ""
+                password = ossrhPassword ?: ""
             }
+            def stagingRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
 
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            url = stagingRepoUrl
         }
+
     }
 }
 
