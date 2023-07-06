@@ -8,9 +8,6 @@ apply from: 'publish-info.gradle'
 
 ext {
     projectEncoding = 'UTF-8'
-
-    ossrhUsername = System.getenv("OSSRH_USERNAME")
-    ossrhPassword = System.getenv("OSSRH_PASSWORD")
 }
 
 // Util Group
@@ -82,7 +79,6 @@ publishing {
 //            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             url = stagingRepoUrl
         }
-
     }
 }
 
