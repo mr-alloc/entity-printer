@@ -1,0 +1,19 @@
+name: publish-to-repository
+run-name: Publish artifacts to repository
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+      - run: |
+          echo "key id is $GPG_KEY_ID"
+          echo -n ""
+      - run: chmod +x ./gradlew publish
