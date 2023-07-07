@@ -1,21 +1,19 @@
 package kr.devis.util.entityprinter.util;
 
-import kr.devis.util.entityprinter.print.builder.BasicRowBuilder;
-import kr.devis.util.entityprinter.print.builder.RowBuilder;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StopWatch {
 
-    private Long startTime;
-    private Stack<Moment> moments;
+    private long startTime = 0;
+    private final List<Moment> moments = new ArrayList<>();
 
-    public StopWatch() {
-        this.startTime = null;
-        this.moments = new Stack<>();
+    public static StopWatch startAndGet() {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        return stopWatch;
     }
 
     public void start() {
@@ -23,21 +21,24 @@ public class StopWatch {
     }
 
     public void pause(final String message) {
-        if(CommonUtils.isNull(this.startTime))
+        if (this.startTime == 0)
             throw new NullPointerException("Start time cannot be null. Please use stopWatch.start() first.");
 
-        Long oldTime = moments.isEmpty()
-                ? startTime
-                : moments.peek().getMillis();
+        long oldTime = moments.isEmpty() ? startTime : moments.get(moments.size() - 1).getSnapshotMillis();
+        long snapshotMillis = System.currentTimeMillis();
+        long executionTime = (snapshotMillis - oldTime);
 
-        final Long executionTime = (System.currentTimeMillis() - oldTime);
-        this.moments.add(new Moment(executionTime, message));
+        this.moments.add(new Moment(message, executionTime, snapshotMillis));
     }
 
-    public List<Record> getResult() {
-        return IntStream.range(0, moments.size()).mapToObj((idx) -> {
-            final Moment moment = moments.get(idx);
-            return new Record(idx + 1, moment.getMessage(), String.format("%4.4f sec",(moment.getMillis() / 1000.f)));
-        }).collect(Collectors.toList());
+    public List<Record> getRecords(PrintType printType) {
+        return IntStream.range(0, moments.size()).mapToObj(idx ->
+                new Record(
+                        idx + 1,
+                        moments.get(idx).getMessage(),
+                        printType.getPrintFunction().apply(moments.get(idx).getMillis()),
+                        moments.get(idx).getSnapshotMillis()
+                )
+        ).collect(Collectors.toList());
     }
 }

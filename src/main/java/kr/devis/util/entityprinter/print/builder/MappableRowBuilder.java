@@ -19,7 +19,7 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
 
     @Override
     public RowBuilder<String> proceed(Object target, Class<?> typeClass) {
-        this.fieldManager = new PrintableMapManager<>(typeClass, getKeyModelWithInitStream(target));
+        this.fieldManager = new PrintableMapManager<>(typeClass, getKeyModelWithInitStream(target, typeClass));
         super.initialize();
         return this;
     }
@@ -46,7 +46,7 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     }
 
     @Override
-    protected PrintableFieldManager getCurrentFieldManager() {
+    protected PrintableFieldManager<String, Map.Entry<String, Object>> getCurrentFieldManager() {
         return this.fieldManager;
     }
 
@@ -69,18 +69,21 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     }
 
 
-
-    private Map<String, Object> getKeyModelWithInitStream(Object target) {
+    private Map<String, Object> getKeyModelWithInitStream(Object target, Class<?> typeClass) {
         Map<String, Object> keyModel;
 
-        if(List.class.isAssignableFrom(target.getClass())) {
+        if (!typeClass.isAssignableFrom(Map.class)) {
+            throw new IllegalArgumentException("target's inner type is not Map.class.");
+        }
+
+        if (List.class.isAssignableFrom(target.getClass())) {
             List<Map<String, Object>> mapList = (List<Map<String, Object>>) target;
             keyModel = mapList.stream().findFirst().orElseThrow(() ->
                     new IllegalArgumentException("Map object must be has element at least one."));
 
-            this.streamSupplier = () -> mapList.stream();
+            this.streamSupplier = mapList::stream;
 
-        } else if(Map.class.isAssignableFrom(target.getClass())) {
+        } else if (Map.class.isAssignableFrom(target.getClass())) {
             keyModel = (Map<String, Object>) target;
 
             this.streamSupplier = () -> Stream.of(keyModel);

@@ -3,9 +3,9 @@ package kr.devis.util.entityprinter.print;
 
 public class Column {
     private int length;
-    private String name;
-    private String type;
-    private boolean nonDataType;
+    private final String name;
+    private final String type;
+    private final boolean nonDataType;
 
     public Column(final String name, final String type, final boolean nonDataType) {
         this.name = name;

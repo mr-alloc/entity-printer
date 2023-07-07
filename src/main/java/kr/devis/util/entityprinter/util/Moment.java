@@ -1,16 +1,22 @@
 package kr.devis.util.entityprinter.util;
 
 public class Moment {
-    private Long milliTimes;
-    private String message;
+    private final String message;
+    private final Long actualMillis;
+    private final Long snapshotMillis;
 
-    public Moment(final Long milliTimes, final String message) {
-        this.milliTimes = milliTimes;
+    public Moment(final String message, final Long actualMillis, final Long snapshotMillis) {
         this.message = message;
+        this.actualMillis = actualMillis;
+        this.snapshotMillis = snapshotMillis;
     }
 
     public Long getMillis() {
-        return this.milliTimes;
+        return this.actualMillis;
+    }
+
+    public Long getSnapshotMillis() {
+        return this.snapshotMillis;
     }
 
     public String getMessage() {

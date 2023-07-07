@@ -16,7 +16,7 @@ public class PrintConfigurator<I> {
     private DateTimeFormatter dateTimeFormatter;
 
     private PrintConfigurator() {
-        this.builderType = BuilderType.DEFAULT;
+        this.builderType = BuilderType.ROW;
         this.options = new HashSet<>();
     }
 
@@ -30,7 +30,7 @@ public class PrintConfigurator<I> {
     }
 
     public static <I> PrintConfigurator<I> create() {
-        return new PrintConfigurator<>(BuilderType.DEFAULT);
+        return new PrintConfigurator<>(BuilderType.ROW);
     }
 
     public BuilderType getBuilderType() {
@@ -82,6 +82,11 @@ public class PrintConfigurator<I> {
 
     public PrintConfigurator<I> withoutFloor() {
         this.options.add(PrintOption.WITHOUT_EACH_BORDER_BOTTOM);
+        return this;
+    }
+
+    public PrintConfigurator<I> applyAll(PrintOption... printOptions) {
+        this.options.addAll(Arrays.asList(printOptions));
         return this;
     }
 }

@@ -17,17 +17,14 @@ public class RowBuilderProvider {
     }
 
     public <I> RowBuilder<I> provide(final PrintConfigurator<I> configurator) {
-        RowBuilder<I> rowBuilder = null;
         try {
-
             final Class<? extends RowBuilder> clazz = BuilderType.get(configurator.getBuilderType());
             final Constructor<? extends RowBuilder> constructor = clazz.getConstructor();
 
-            rowBuilder = constructor.newInstance();
-            rowBuilder.config(configurator);
+            RowBuilder<I> rowBuilder = constructor.newInstance();
+            return rowBuilder.config(configurator);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e.getMessage());
         }
-        return rowBuilder;
     }
 }

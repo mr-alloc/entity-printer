@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import static kr.devis.util.entityprinter.print.handle.KnownCondition.NO_ACTIVATED_MESSAGE;
+
 /**
  * 공통적으로 Row를 만들기위한 추상클래스
  *
@@ -25,6 +27,7 @@ import java.util.Map;
  */
 public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
+    private static final String EMPTY_MESSAGE = "empty";
 
     /**
      * 실제로 쌓일 문자열을 담는 StringBuilder
@@ -35,11 +38,6 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
      * 컬럼의 정보를 담는 리스트
      */
     protected final List<Map<String, String>> columnMapList = new ArrayList<>();
-    protected String floor;
-    protected String room;
-
-    private static final String EMPTY_MESSAGE = "empty";
-    private static final String NO_ACTIVATED_MESSAGE = "There are no Activated fields";
 
     private final FloorGenerator floorGenerator = new DefaultFloorGenerator();
     protected PrintOptionAware optionAware;
@@ -48,6 +46,10 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     protected abstract <F> PrintableFieldManager<I, F> getCurrentFieldManager();
 
     protected abstract void calculateColumnInfo();
+
+    protected PrintConfigurator<I> getConfigurator() {
+        return this.configurator;
+    }
 
 
     protected void initialize() {
@@ -131,7 +133,8 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         this.setColumnValues();
 
         if (columnMapList.isEmpty())
-            this.builder.append(emptyFloor()).append(this.floor);
+            this.builder.append(emptyFloor());
+
         return this.builder.toString();
     }
 
@@ -159,14 +162,16 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
      * @return 빈데이터를 위한 Empty Floor
      */
     private String emptyFloor() {
-        int floorLength = this.floor.length() - 4 <= 0
-                ? 6
-                : this.floor.length() - 4;
+        SuiteFloor suiteFloor = floorGenerator.getSuiteFloor();
+        String floor = suiteFloor.getFloor().toString();
 
-        final String form = Resource.join(
-                Resource.SIDE_WALL, " %-",
-                String.valueOf(floorLength), "s",
-                Resource.SIDE_WALL, Resource.LINEFEED);
+        int floorLength = floor.length() - 4 <= 0
+                ? 6
+                : floor.length() - 4;
+        final String form = new StringBuilder()
+                .append(Resource.SIDE_WALL).append(" %-").append(floorLength).append("s ").append(Resource.SIDE_WALL).append(Resource.LINEFEED)
+                .append(floor).append(Resource.LINEFEED)
+                .toString();
 
         return String.format(form, EMPTY_MESSAGE);
     }
