@@ -32,8 +32,8 @@ jobs:
         run: |
           echo ${{ secrets.OSSRH_USERNAME }}
           ./gradlew sign \
-          -Psigning.keyId=$GPG_KEY_ID \ 
-          -Psigning.password=$GPG_KEY_PASSWORD \ 
+          -Psigning.keyId=$GPG_KEY_ID \
+          -Psigning.password=$GPG_KEY_PASSWORD \
           -Psigning.secretKeyRingFile=$GPG_KEY_RING_FILE \
           -PossrhUsername=$OSSRH_USERNAME \
           -PossrhPassword=$OSSRH_PASSWORD
