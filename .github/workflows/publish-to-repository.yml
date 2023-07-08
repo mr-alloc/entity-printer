@@ -29,16 +29,6 @@ jobs:
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
           fingerprint: ${{ secrets.GPG_FINGERPRINT }}
 
-      - name: 서명 파일 경로 지정
-        run: |
-          export SIGNING_KEY_FILE=$PWD/signing.pgp
-
-      - name: GPG 키링파일 다운로드
-        uses: actions/download-artifact@v2
-        with:
-          name: gpg-keyring-file
-          path: $SIGNING_KEY_FILE
-
       - name: Gradle 서명
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_ID }}
