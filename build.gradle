@@ -21,6 +21,7 @@ repositories {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
@@ -69,15 +70,13 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = ossrhUsername ?: ""
-                password = ossrhPassword ?: ""
+                username = ossrhUsername ?: System.getenv("OSSRH_USERNAME")
+                password = ossrhPassword ?: System.getenv("OSSRH_PASSWORD")
             }
-            def stagingRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
 
-//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            url = stagingRepoUrl
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
 }
@@ -85,6 +84,12 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 // 컴파일 인코딩 설정

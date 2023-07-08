@@ -19,7 +19,7 @@ interface IEntityPrinter {
 
     /**
      * Looks like same as {@link #drawEntity(Object)} but it has configurator.
-     * 일반적인 {@link #drawEntity(T)}와 같지만 설정 값을 추가 할 수 있다.
+     * 일반적인 {@link kr.devis.util.entityprinter.print.printer.EntityPrinter#drawEntity}와 같지만 설정 값을 추가 할 수 있다.
      *
      * @param entity       출력될 객체 (Entity to be printed)
      * @param configurator 출력 설정 정보
@@ -30,10 +30,10 @@ interface IEntityPrinter {
     <I, T> String drawEntity(final T entity, final PrintConfigurator<I> configurator);
 
     /**
-     * @param entities
-     * @param clazz
-     * @param <T>
-     * @return
+     * @param entities collection of entities
+     * @param clazz inner type class of collection
+     * @param <T> inner type of collection
+     * @return formatted collection data in table as string.
      */
     <T> String drawList(final Collection<? extends T> entities, Class<? extends T> clazz);
 
