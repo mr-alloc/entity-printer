@@ -86,11 +86,6 @@ signing {
     sign publishing.publications.mavenJava
 }
 
-signing.gnupg {
-    useGpgCmd()
-    signPublishingProperties = signing.properties
-}
-
 javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
