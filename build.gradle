@@ -83,11 +83,9 @@ publishing {
 
 
 signing {
-    def decoded = new String(Base64.getDecoder().decode(System.getenv("GPG_KEY_RING_FILE")))
-
     keyId = System.getenv("GPG_KEY_ID")
     password = System.getenv("GPG_KEY_PASSPHRASE")
-    secretKeyRingFile = file(decoded)
+    secretKeyRingFile = System.getenv("GPG_KEY_RING_FILE")
 
     sign publishing.publications.mavenJava
 }
@@ -100,6 +98,3 @@ javadoc {
 
 // 컴파일 인코딩 설정
 [compileJava, compileTestJava]*.options*.encoding = "$projectEncoding"
-
-// https://docs.gradle.org/current/userguide/publishing_setup.html#publishing_overview 참고
-// ':signMavenJavaPublication' because it has no configured signatory: 키서버에 키가 없음
