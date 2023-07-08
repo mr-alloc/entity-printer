@@ -30,7 +30,7 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          echo ${{ secrets.OSSRH_USERNAME }}
+          echo "OSSRH username is $OSSRH_USERNAME"
           ./gradlew sign \
           -Psigning.keyId=$GPG_KEY_ID \
           -Psigning.password=$GPG_KEY_PASSWORD \
