@@ -28,9 +28,19 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_KEY_ID }}
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
           fingerprint: "1F41723121D84B6F3039449EAFDE4C3C6DE2A7F2"
-
+      - name: 서명 파일 생성
+        run: | 
+          gpg --export-secret-keys ${{ secrets.GPG_KEY_ID }} > ./signing.pgp
+          export $SIGNING_KEY_FILE=$PWD/signing.pgp
+          echo "signing key file path is $SIGNING_KEY_FILE"
       - name: Gradle 서명
-        run: ./gradlew sign
+        run: |
+          ./gradlew sign \
+            -Psigning.keyId= ${{ secrets.GPG_KEY_ID }} \
+            -Psigning.password= ${{ secrets.GPG_KEY_PASSWORD }} \
+            -Psigning.secretKeyRingFile=$SIGNING_KEY_FILE \
+            -ossrhUsername=$OSSRH_USERNAME \
+            -ossrhPassword=$OSSRH_PASSWORD
 
       - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2

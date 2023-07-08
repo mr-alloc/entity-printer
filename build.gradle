@@ -84,11 +84,6 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
-
-    signatory {
-        keyId = System.getenv("GPG_KEY_ID")
-        password = System.getenv("GPG_KEY_PASSWORD")
-    }
 }
 
 javadoc {
