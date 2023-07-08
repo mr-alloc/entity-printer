@@ -5,7 +5,7 @@ on:
     branches:
       - master
 jobs:
-  Publish Entity Printer to Maven Central:
+  publish-artifact-to-repository:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
