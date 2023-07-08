@@ -83,8 +83,9 @@ publishing {
 
 
 signing {
-    keyId = System.getEnv("GPG_KEY_ID") ?: "6DE2A7F2"
+    keyId = System.getEnv("GPG_KEY_ID")
     password = System.getenv("GPG_KEY_PASSWORD")
+    secretKeyRingFile = file(new String(System.getenv("GPG_KEY_RING_FILE").decodeBase64()))
     sign publishing.publications.mavenJava
 }
 

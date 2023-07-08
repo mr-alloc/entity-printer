@@ -21,11 +21,12 @@ jobs:
 
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
-      - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v2
-        with:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_KEY_ID }}
-          PASSPHRASE: ${{ secrets.GPG_KEY_PASSWORD }}
+
+      - name: Singing GPG Key
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        run: ./gradlew sign
 
       - name: Publish artifacts to OSSRH Repository
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
