@@ -73,6 +73,9 @@ publishing {
             credentials {
                 username = System.getenv("OSSRH_USERNAME")
                 password = System.getenv("OSSRH_PASSWORD")
+
+                println 'OSSRH_USERNAME: ' + username
+                println 'OSSRH_PASSWORD: ' + password
             }
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
