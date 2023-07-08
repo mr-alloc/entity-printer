@@ -31,7 +31,7 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
           echo ${{ secrets.OSSRH_USERNAME }}
-          ./gradlew sign
+          ./gradlew sign -Psigning.keyId=$GPG_KEY_ID -Psigning.password=$GPG_KEY_PASSWORD -Psigning.secretKeyRingFile=$GPG_KEY_RING_FILE
 
       - name: Publish artifacts to OSSRH Repository
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
