@@ -29,9 +29,6 @@ jobs:
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
           fingerprint: "1F41723121D84B6F3039449EAFDE4C3C6DE2A7F2"
 
-      - name: GPG 키 목록 조회
-        run: gpg --list-keys
-
       - name: Gradle 서명
         run: ./gradlew sign
 

@@ -83,11 +83,12 @@ publishing {
 
 
 signing {
-    keyId = System.getenv("GPG_KEY_ID")
-    password = System.getenv("GPG_KEY_PASSPHRASE")
-    secretKeyRingFile = System.getenv("GPG_KEY_RING_FILE")
-
     sign publishing.publications.mavenJava
+}
+
+signing.gnupg {
+    useGpgCmd()
+    signPublishingProperties = signing.properties
 }
 
 javadoc {
