@@ -83,7 +83,7 @@ publishing {
 
 
 signing {
-    def decoded = new String(System.getenv("GPG_KEY_RING_FILE".decodeBase64()))
+    def decoded = new String(Base64.getDecoder().decode(System.getenv("GPG_KEY_RING_FILE")))
 
     keyId = System.getenv("GPG_KEY_ID")
     password = System.getenv("GPG_KEY_PASSPHRASE")

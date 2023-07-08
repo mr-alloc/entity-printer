@@ -19,10 +19,10 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
-      - name: Validate Gradle wrapper
+      - name: Gradle Wrapper 유효성 검증
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Singing GPG Key
+      - name: GPG 키 서명
         uses: gradle/gradle-build-action@v2
         with:
           arguments: sign
@@ -33,7 +33,7 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSPHRASE: ${{ secrets.OSSRH_PASSWORD }}
 
-      - name: Publish artifacts to OSSRH Repository
+      - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2
         with:
           arguments: publish
