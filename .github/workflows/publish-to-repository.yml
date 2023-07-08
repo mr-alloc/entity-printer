@@ -30,7 +30,7 @@ jobs:
           fingerprint: ${{ secrets.GPG_FINGERPRINT }}
       - name: 서명 파일 생성
         run: | 
-          gpg --export-secret-keys ${{ secrets.GPG_KEY_ID }} > ./signing.pgp
+          gpg --export-secret-keys ${{ secrets.GPG_FINGERPRINT_SHORT }} > ./signing.pgp
           export $SIGNING_KEY_FILE=$PWD/signing.pgp
           echo "signing key file path is $SIGNING_KEY_FILE"
       - name: Gradle 서명
