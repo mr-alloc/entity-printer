@@ -26,7 +26,10 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: ./gradlew sign
+        run: |
+          echo ${{ secrets.OSSRH_USERNAME }}
+          ./gradlew sign
+          
 
       - name: Publish artifacts to OSSRH Repository
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
