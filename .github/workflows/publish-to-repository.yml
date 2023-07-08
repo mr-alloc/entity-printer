@@ -27,7 +27,7 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_KEY_ID }}
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
-          fingerprint: "1F41723121D84B6F3039449EAFDE4C3C6DE2A7F2"
+          fingerprint: ${{ secrets.GPG_FINGERPRINT }}
       - name: 서명 파일 생성
         run: | 
           gpg --export-secret-keys ${{ secrets.GPG_KEY_ID }} > ./signing.pgp
@@ -36,7 +36,7 @@ jobs:
       - name: Gradle 서명
         run: |
           ./gradlew sign \
-            -Psigning.keyId= ${{ secrets.GPG_KEY_ID }} \
+            -Psigning.keyId= ${{ secrets.GPG_FINGERPRINT_SHORT }} \
             -Psigning.password= ${{ secrets.GPG_KEY_PASSWORD }} \
             -Psigning.secretKeyRingFile=$SIGNING_KEY_FILE \
             -ossrhUsername=$OSSRH_USERNAME \
