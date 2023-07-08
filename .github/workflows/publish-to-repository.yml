@@ -40,8 +40,8 @@ jobs:
           GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
         run: |
           ./gradlew sign \
-            -ossrhUsername=$OSSRH_USERNAME \
-            -ossrhPassword=$OSSRH_PASSWORD
+            -PossrhUsername=$OSSRH_USERNAME \
+            -PossrhPassword=$OSSRH_PASSWORD
 
       - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2
