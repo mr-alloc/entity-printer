@@ -21,25 +21,16 @@ jobs:
 
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
-
-      - name: Signing gpg key
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v2
         with:
-          arguments: sign
-        env:
-          singing.keyId: ${{ secrets.GPG_KEY_ID }}
-          signing.password: ${{ secrets.GPG_KEY_PASSWORD }}
-          signing.secretKeyRingFile: ${{ secrets.GPG_KEY_RING_FILE }}
-          ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
+          gpg-private-key: ${{ secrets.GPG_KEY_ID }}
+          passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
 
-      - name: Publish package
+      - name: Publish artifacts to OSSRH Repository
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
         with:
           arguments: publish
         env:
-          singing.keyId: ${{ secrets.GPG_KEY_ID }}
-          signing.password: ${{ secrets.GPG_KEY_PASSWORD }}
-          signing.secretKeyRingFile: ${{ secrets.GPG_KEY_RING_FILE }}
-          ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
