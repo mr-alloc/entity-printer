@@ -71,7 +71,7 @@ publishing {
         maven {
             credentials {
                 username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
+                password = System.getenv("OSSRH_PASSPHRASE")
             }
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
@@ -83,6 +83,12 @@ publishing {
 
 
 signing {
+    def decoded = new String(System.getenv("GPG_KEY_RING_FILE".decodeBase64()))
+
+    keyId = System.getenv("GPG_KEY_ID")
+    password = System.getenv("GPG_KEY_PASSPHRASE")
+    secretKeyRingFile = file(decoded)
+
     sign publishing.publications.mavenJava
 }
 

@@ -20,25 +20,21 @@ jobs:
           distribution: 'adopt'
 
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
+        uses: gradle/wrapper-validation-action@v3
 
       - name: Singing GPG Key
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: sign
         env:
-          E_GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-          E_GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
-          E_GPG_KEY_RING_FILE: ${{ secrets.GPG_KEY_RING_FILE }}
-          E_OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          E_OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: |
-          ./gradlew sign \
-          -Psigning.keyId=$E_GPG_KEY_ID \
-          -Psigning.password=$E_GPG_KEY_PASSWORD \
-          -Psigning.secretKeyRingFile=$E_GPG_KEY_RING_FILE \
-          -PossrhUsername=$E_OSSRH_USERNAME \
-          -PossrhPassword=$E_OSSRH_PASSWORD
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_KEY_PASSPHRASE: ${{ secrets.GPG_KEY_PASSWORD }}
+          GPG_KEY_RING_FILE: ${{ secrets.GPG_KEY_RING_FILE }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSPHRASE: ${{ secrets.OSSRH_PASSWORD }}
 
       - name: Publish artifacts to OSSRH Repository
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: publish
         env:
