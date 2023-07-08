@@ -29,11 +29,16 @@ jobs:
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
           fingerprint: ${{ secrets.GPG_FINGERPRINT }}
 
-#      - name: 서명 파일 생성
-#        run: |
-#          export SIGNING_KEY_FILE=$PWD/signing.pgp
-#          echo "signing key file path is $SIGNING_KEY_FILE"
-#          gpg --export-secret-keys ${{ secrets.GPG_FINGERPRINT_SHORT }} > $SIGNING_KEY_FILE
+      - name: 서명 파일 경로 지정
+        run: |
+          export SIGNING_KEY_FILE=$PWD/signing.pgp
+
+      - name: GPG 키링파일 다운로드
+        uses: actions/download-artifact@v2
+        with:
+          name: gpg-keyring-file
+          path: $SIGNING_KEY_FILE
+
       - name: Gradle 서명
         env:
           GPG_FINGERPRINT_SHORT: ${{ secrets.GPG_FINGERPRINT_SHORT }}
@@ -41,7 +46,10 @@ jobs:
         run: |
           ./gradlew sign \
             -PossrhUsername=$OSSRH_USERNAME \
-            -PossrhPassword=$OSSRH_PASSWORD
+            -PossrhPassword=$OSSRH_PASSWORD \
+            -Psigning.keyId=$GPG_FINGERPRINT_SHORT \
+            -Psigning.password=$GPG_KEY_PASSWORD \
+            -Psigning.secretKeyRingFile=$SIGNING_KEY_FILE
 
       - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2

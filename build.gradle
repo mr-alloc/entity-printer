@@ -84,10 +84,6 @@ publishing {
 
 
 signing {
-    def signingKey = System.getenv('GPG_FINGERPRINT_SHORT')
-    def signingPassword = System.getenv('GPG_KEY_PASSWORD')
-
-    useInMemoryPgpKeys(signingKey, signingPassword)
     sign publishing.publications.mavenJava
 }
 
