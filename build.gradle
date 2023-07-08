@@ -71,8 +71,8 @@ publishing {
         maven {
             // 실행시 주입 -PossrhUsername=xxx -PossrhPassword=xxx
             credentials {
-                username = ossrhUsername
-                password = ossrhPassword
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
             }
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
