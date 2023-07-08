@@ -29,15 +29,6 @@ jobs:
           passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
           fingerprint: ${{ secrets.GPG_FINGERPRINT }}
 
-      - name: Gradle 서명
-        env:
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: |
-          ./gradlew sign
-
       - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2
         with:
