@@ -2,8 +2,10 @@ name: publish-to-repository
 run-name: Publish artifacts to repository
 on:
   push:
+    tags:
+      - '.*?-SNAPSHOT$'
     branches:
-      - master
+      - snapshot
 jobs:
   publish-artifact-to-repository:
     runs-on: ubuntu-20.04

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'signing'
 }
 
 apply from: 'publish-info.gradle'
@@ -70,11 +71,8 @@ publishing {
         maven {
             // 실행시 주입 -PossrhUsername=xxx -PossrhPassword=xxx
             credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-
-                println 'OSSRH_USERNAME: ' + username
-                println 'OSSRH_PASSWORD: ' + password
+                username = ossrhUsername ?: System.getenv("OSSRH_USERNAME")
+                password = ossrhPassword ?: System.getenv("OSSRH_PASSWORD")
             }
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
@@ -84,6 +82,9 @@ publishing {
     }
 }
 
+signing {
+    sign publishing.publications.mavenJava
+}
 
 javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
