@@ -3,7 +3,7 @@ run-name: Publish artifacts to repository
 on:
   push:
     tags:
-      - '.*?-SNAPSHOT$'
+      - '*-SNAPSHOT'
     branches:
       - snapshot
 jobs:
