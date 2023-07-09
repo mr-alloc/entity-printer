@@ -22,12 +22,6 @@ jobs:
       - name: Gradle Wrapper 유효성 검증
         uses: gradle/wrapper-validation-action@v1
 
-      - name: GPG Key 가져오기
-        uses: crazy-max/ghaction-import-gpg@v5
-        with:
-          gpg_private_key: ${{ secrets.GPG_KEY_ID }}
-          passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
-          fingerprint: ${{ secrets.GPG_FINGERPRINT }}
 
       - name: OSSRH Maven central 저장소 배포
         uses: gradle/gradle-build-action@v2
