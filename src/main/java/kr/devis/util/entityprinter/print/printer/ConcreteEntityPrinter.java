@@ -50,20 +50,20 @@ class ConcreteEntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <T> String drawList(final Collection<? extends T> entities, Class<? extends T> clazz) {
-        return drawList(entities, null, clazz);
+    public <T> String drawCollection(final Collection<? extends T> entities, Class<? extends T> clazz) {
+        return drawCollection(entities, null, clazz);
     }
 
     @Override
-    public <I, T> String drawList(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz) {
+    public <I, T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz) {
         BuilderType builderType = Map.class.isAssignableFrom(clazz)
                 ? BuilderType.MAP
                 : BuilderType.ROW;
 
-        return drawList(entities, configured, clazz, builderType);
+        return drawCollection(entities, configured, clazz, builderType);
     }
 
-    private <I, T> String drawList(final Collection<?> entities, final PrintConfigurator<I> configurator, Class<T> clazz, BuilderType builderType) {
+    private <I, T> String drawCollection(final Collection<?> entities, final PrintConfigurator<I> configurator, Class<T> clazz, BuilderType builderType) {
         final PrintConfigurator<I> toBeConfigured = inspectType(configurator, builderType);
 
         return RowBuilderProvider.getInstance()

@@ -3,6 +3,7 @@ package kr.devis.util.entityprinter.print;
 
 public class Column {
     private int length;
+    private int line;
     private final String name;
     private final String type;
     private final boolean nonDataType;
@@ -14,8 +15,8 @@ public class Column {
         this.nonDataType = nonDataType;
     }
 
-    public void setLength(int length) {
-        this.length = length;
+    public int getLine() {
+        return this.line;
     }
 
     public int getLength() {
@@ -31,6 +32,11 @@ public class Column {
             return this.name;
 
         return String.format("%s (%s)", this.name, this.type);
+    }
+
+    public void with(int length, int line) {
+        this.length = length;
+        this.line = line;
     }
 
 }

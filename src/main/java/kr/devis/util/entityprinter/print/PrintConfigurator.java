@@ -5,10 +5,14 @@ import kr.devis.util.entityprinter.constant.PrintOption;
 import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PrintConfigurator<I> {
+public final class PrintConfigurator<I> {
 
     private final Set<PrintOption> options;
     private BuilderType builderType;
@@ -59,7 +63,8 @@ public class PrintConfigurator<I> {
         return this;
     }
 
-    public PrintConfigurator<I> activateFields(final I... fieldIndexes) {
+    @SafeVarargs
+    public final PrintConfigurator<I> activateFields(final I... fieldIndexes) {
         this.activateIndexes = CommonUtils.isNull(fieldIndexes) ? new ArrayList<>() : Arrays.stream(fieldIndexes)
                 .distinct()
                 .sorted()

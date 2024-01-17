@@ -35,7 +35,7 @@ interface IEntityPrinter {
      * @param <T> inner type of collection
      * @return formatted collection data in table as string.
      */
-    <T> String drawList(final Collection<? extends T> entities, Class<? extends T> clazz);
+    <T> String drawCollection(final Collection<? extends T> entities, Class<? extends T> clazz);
 
     /**
      * Print collection of entities
@@ -48,6 +48,6 @@ interface IEntityPrinter {
      * @param <T>        entity의 타입
      * @return formatted collection data in table as string.
      */
-    <I, T> String drawList(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz);
+    <I, T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz);
 
 }

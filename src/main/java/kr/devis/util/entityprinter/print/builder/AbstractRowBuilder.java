@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static kr.devis.util.entityprinter.print.handle.KnownCondition.NO_ACTIVATED_MESSAGE;
 
@@ -83,23 +85,21 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
     protected final String getStringValue(Object value, final Column column) {
         if (value == null) value = Resource.NULL_VALUE;
-
-        String strValue = typeControl(value).replaceAll(Resource.IGNORE_LETTER, " ");
-        ColumnValue columnValue = new ColumnValue(typeControl(value));
+        String typeValue = typeControl(value);
+        //멀티라인은 스트링으로 표현하여 처리
+        String strValue = typeValue.replaceAll(Resource.IGNORE_LETTER, "\\$1");
+        //라인피드로 나눠서 라인개수를 확인하기때문에 replace되지않은 값으로 생성.
+        ColumnValue columnValue = new ColumnValue(typeValue);
         Integer lengthOfValue = columnValue.getLineLength();
 
-        if (optionAware.isAllowMultiline()) {
-            // multi line 대응 행, 열 길이 계산
-        } else {
-
-            if (lengthOfValue > Resource.DEFAULT_MAX_LENGTH_PER_LINE) {
-                strValue = columnValue.getFirstLine().substring(0, (Resource.DEFAULT_MAX_LENGTH_PER_LINE - Resource.ELLIPSIS.length())) + Resource.ELLIPSIS;
-                lengthOfValue = Resource.DEFAULT_MAX_LENGTH_PER_LINE;
-            }
-
+        //멀티라인이 아니면서 최대길이를 넘어가면 줄임표를 붙여준다.
+        if (!optionAware.isAllowMultiline() && lengthOfValue > Resource.DEFAULT_MAX_LENGTH_PER_LINE) {
+            strValue = columnValue.getFirstLine().substring(0, (Resource.DEFAULT_MAX_LENGTH_PER_LINE - Resource.ELLIPSIS.length())) + Resource.ELLIPSIS;
+            lengthOfValue = Resource.DEFAULT_MAX_LENGTH_PER_LINE;
         }
 
-        column.setLength(Math.max(column.getLength(), (lengthOfValue + Resource.EACH_SPACE_LENGTH)));
+        int maxLength = Math.max(column.getLength(), (lengthOfValue + Resource.EACH_SPACE_LENGTH));
+        column.with(maxLength, columnValue.getLineCount());
 
         return strValue;
     }
@@ -113,8 +113,8 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
             result = ((ChronoLocalDateTime) value).format(optionAware.getDateFormatter());
         else
             result = value;
-
-        return result.toString();
+        //캐리지 리턴 삭제
+        return result.toString().replace("\r", "");
     }
 
     @Override
@@ -147,8 +147,29 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         ListIterator<Map<String, String>> mapListIterator = this.columnMapList.listIterator();
 
         while (mapListIterator.hasNext()) {
-            Map<String, String> next = mapListIterator.next();
-            String[] columnValues = CommonUtils.columnValuesOf(this.columns, col -> next.get(col.getName()));
+            Map<String, String> nextRow = mapListIterator.next();
+            if (optionAware.isAllowMultiline()) {
+                //컬럼중 가장 긴라인을 기준으로 생성
+                int largestLine = this.columns.stream().map(Column::getLine).max(Integer::compareTo).orElse(1);
+                Map<String, String[]> multiLineRow = nextRow.entrySet().stream().collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue()
+                                .replaceAll("\\" + Resource.IGNORE_LETTER, "$1")
+                                .split(Resource.LINEFEED)
+                ));
+                IntStream.range(0, largestLine).forEach(line -> {
+                    String[] columnValues = columns.stream().map(col -> {
+                        String[] values = multiLineRow.get(col.getName());
+                        //컬럼 내 라인의 값 없다면 ""
+                        return col.getLine() >= values.length ? values[line] : "";
+                    }).toArray(String[]::new);
+                    this.builder.append(suiteFloor.getRoomWithValues(columnValues));
+                });
+
+            }
+
+            String[] columnValues = CommonUtils.columnValuesOf(this.columns, col -> nextRow.get(col.getName()));
+
             this.builder.append(suiteFloor.getRoomWithValues(columnValues));
 
             if (optionAware.isWithoutFloor() && (mapListIterator.hasNext())) {

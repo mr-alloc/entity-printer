@@ -5,7 +5,7 @@ import kr.devis.util.entityprinter.print.PrintConfigurator;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public class EntityPrinter implements IEntityPrinter {
+public final class EntityPrinter implements IEntityPrinter {
 
     private final IEntityPrinter concretePrinter;
 
@@ -24,13 +24,13 @@ public class EntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <T> String drawList(Collection<? extends T> entities, Class<? extends T> clazz) {
-        return protect(() -> concretePrinter.drawList(entities, clazz));
+    public <T> String drawCollection(Collection<? extends T> entities, Class<? extends T> clazz) {
+        return protect(() -> concretePrinter.drawCollection(entities, clazz));
     }
 
     @Override
-    public <I, T> String drawList(Collection<? extends T> entities, PrintConfigurator<I> configured, Class<? extends T> clazz) {
-        return protect(() -> concretePrinter.drawList(entities, configured, clazz));
+    public <I, T> String drawCollection(Collection<? extends T> entities, PrintConfigurator<I> configured, Class<? extends T> clazz) {
+        return protect(() -> concretePrinter.drawCollection(entities, configured, clazz));
     }
 
     private String protect(Supplier<String> supplier) {

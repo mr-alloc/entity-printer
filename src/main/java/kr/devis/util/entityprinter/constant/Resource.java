@@ -21,7 +21,7 @@ public class Resource {
     public static final byte LETTER_D_BYTE = 100;
     public static final byte SPACE_BYTE = 32;
 
-    public static final String IGNORE_LETTER = "(\\n|\\r|\\t)";
+    public static final String IGNORE_LETTER = "(\\n|\\t)";
     public static final String ELLIPSIS = "...";
     public static final Integer DEFAULT_MAX_LENGTH_PER_LINE = 30;
     public static final Integer EACH_SPACE_LENGTH = 2;
