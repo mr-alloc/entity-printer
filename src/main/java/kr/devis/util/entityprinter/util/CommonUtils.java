@@ -4,6 +4,7 @@ import kr.devis.util.entityprinter.constant.Resource;
 import kr.devis.util.entityprinter.print.Column;
 import kr.devis.util.entityprinter.print.Wrapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -37,7 +38,11 @@ public interface CommonUtils {
     static void getWithSeparate(String[] lines, Consumer<Integer> valueConsumer) {
         int maxLength = 0;
         for (String line : lines) {
-            maxLength = Math.max(maxLength, line.length());
+            int tabCount = 0;
+            for (char ch : line.toCharArray()) {
+                if (ch == '\t') tabCount++;
+            }
+            maxLength = Math.max(maxLength, line.length() + tabCount);
         }
 
         valueConsumer.accept(maxLength);

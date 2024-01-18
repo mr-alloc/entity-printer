@@ -13,10 +13,7 @@ import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -87,8 +84,8 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         if (value == null) value = Resource.NULL_VALUE;
         String typeValue = typeControl(value);
         //멀티라인은 스트링으로 표현하여 처리
-        String strValue = typeValue.replaceAll(Resource.IGNORE_LETTER, "\\$1");
-        //라인피드로 나눠서 라인개수를 확인하기때문에 replace되지않은 값으로 생성.
+        String strValue = typeValue.replaceAll("\\n", "\\\n");
+        //라인피드로 나눠서 라인개수를 확인하기때문에 replace 되지 않은 값으로 생성.
         ColumnValue columnValue = new ColumnValue(typeValue);
         Integer lengthOfValue = columnValue.getLineLength();
 
@@ -114,7 +111,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         else
             result = value;
         //캐리지 리턴 삭제
-        return result.toString().replace("\r", "");
+        return result.toString().replace("\r", "").replace("\t", "  ");
     }
 
     @Override
@@ -140,9 +137,6 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
     private void setColumnValues() {
         SuiteFloor suiteFloor = this.floorGenerator.getSuiteFloor();
-        if (this.optionAware.isAllowMultiline()) {
-            return;
-        }
         // 컬럼 값 세팅
         ListIterator<Map<String, String>> mapListIterator = this.columnMapList.listIterator();
 
@@ -154,23 +148,21 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
                 Map<String, String[]> multiLineRow = nextRow.entrySet().stream().collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue()
-                                .replaceAll("\\" + Resource.IGNORE_LETTER, "$1")
+                                .replaceAll("\\\n", "\n")
                                 .split(Resource.LINEFEED)
                 ));
                 IntStream.range(0, largestLine).forEach(line -> {
                     String[] columnValues = columns.stream().map(col -> {
                         String[] values = multiLineRow.get(col.getName());
                         //컬럼 내 라인의 값 없다면 ""
-                        return col.getLine() >= values.length ? values[line] : "";
+                        return col.getLine() > line ? values[line] : "";
                     }).toArray(String[]::new);
                     this.builder.append(suiteFloor.getRoomWithValues(columnValues));
                 });
-
+            } else {
+                String[] columnValues = CommonUtils.columnValuesOf(this.columns, col -> nextRow.get(col.getName()));
+                this.builder.append(suiteFloor.getRoomWithValues(columnValues));
             }
-
-            String[] columnValues = CommonUtils.columnValuesOf(this.columns, col -> nextRow.get(col.getName()));
-
-            this.builder.append(suiteFloor.getRoomWithValues(columnValues));
 
             if (optionAware.isWithoutFloor() && (mapListIterator.hasNext())) {
                 continue;

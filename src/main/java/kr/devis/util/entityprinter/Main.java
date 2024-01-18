@@ -23,13 +23,16 @@ public class Main {
         logMap.put("user", "{\n\t\"name\": \"devis\",\n\t\"age\": 30\n}");
         logMap.put("date", "2020-01-01");
         logMap.put("time", "12:00:00");
+        Map<String, String> logMap2 = new HashMap<>();
+        logMap2.put("user", "{\n\t\"name\": \"devis\",\n\t\"age\": 30\n}");
+        logMap2.put("date", "2020-01-01");
+        logMap2.put("time", "12:00:00");
 
         List<Map<String, String>> mapList = new ArrayList<>();
         mapList.add(logMap);
+        mapList.add(logMap2);
 
-        PrintConfigurator configurator = PrintConfigurator.create()
-                .allowMultiLine()
-                .withoutFloor();
+        PrintConfigurator configurator = PrintConfigurator.create();
         System.out.println(printer.drawCollection(mapList, configurator, Map.class));
 
     }
