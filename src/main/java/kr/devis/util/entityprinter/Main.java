@@ -32,7 +32,8 @@ public class Main {
         mapList.add(logMap);
         mapList.add(logMap2);
 
-        PrintConfigurator configurator = PrintConfigurator.create();
+        PrintConfigurator configurator = PrintConfigurator.create()
+                .allowMultiLine();
         System.out.println(printer.drawCollection(mapList, configurator, Map.class));
 
     }

@@ -83,14 +83,26 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     protected final String getStringValue(Object value, final Column column) {
         if (value == null) value = Resource.NULL_VALUE;
         String typeValue = typeControl(value);
-        //멀티라인은 스트링으로 표현하여 처리
-        String strValue = typeValue.replaceAll("\\n", "\\\n");
+
+        //이스케이프 문자 그대로 출력
+        String strValue = optionAware.isNoEscape()
+                ? typeValue
+                : CommonUtils.escapeWhiteSpace(typeValue);
         //라인피드로 나눠서 라인개수를 확인하기때문에 replace 되지 않은 값으로 생성.
-        ColumnValue columnValue = new ColumnValue(typeValue);
-        Integer lengthOfValue = columnValue.getLineLength();
+        ColumnValue columnValue = new ColumnValue(strValue);
+        int lengthOfValue = strValue.length();
+
+        if (optionAware.isAllowMultiline()) {
+            if (optionAware.isNoEscape()) {
+
+            }
+            String[] lines = CommonUtils.separateWithSize(strValue, Resource.DEFAULT_MAX_LENGTH_PER_LINE);
+            lengthOfValue = CommonUtils.getMaxLength(lines);
+            columnValue.applyMultiline(lines);
+        }
 
         //멀티라인이 아니면서 최대길이를 넘어가면 줄임표를 붙여준다.
-        if (!optionAware.isAllowMultiline() && lengthOfValue > Resource.DEFAULT_MAX_LENGTH_PER_LINE) {
+        if (!optionAware.isNoEllipsis() && lengthOfValue > Resource.DEFAULT_MAX_LENGTH_PER_LINE) {
             strValue = columnValue.getFirstLine().substring(0, (Resource.DEFAULT_MAX_LENGTH_PER_LINE - Resource.ELLIPSIS.length())) + Resource.ELLIPSIS;
             lengthOfValue = Resource.DEFAULT_MAX_LENGTH_PER_LINE;
         }
@@ -111,7 +123,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         else
             result = value;
         //캐리지 리턴 삭제
-        return result.toString().replace("\r", "").replace("\t", "  ");
+        return result.toString();
     }
 
     @Override
@@ -147,9 +159,13 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
                 int largestLine = this.columns.stream().map(Column::getLine).max(Integer::compareTo).orElse(1);
                 Map<String, String[]> multiLineRow = nextRow.entrySet().stream().collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue()
-                                .replaceAll("\\\n", "\n")
-                                .split(Resource.LINEFEED)
+                        entry -> {
+                            if (optionAware.isAllowMultiline()) {
+
+                            }
+
+                            return CommonUtils.separateWithSize(entry.getValue(), Resource.DEFAULT_MAX_LENGTH_PER_LINE);
+                        }
                 ));
                 IntStream.range(0, largestLine).forEach(line -> {
                     String[] columnValues = columns.stream().map(col -> {

@@ -13,6 +13,8 @@ public class PrintOptionAware {
     private boolean dateTimeFormat = false;
     private boolean allowMultiline = false;
     private boolean withoutFloor = false;
+    private boolean noEscape = false;
+    private boolean noEllipsis = false;
 
     private final Set<PrintOption> options;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
@@ -42,6 +44,14 @@ public class PrintOptionAware {
         return this.withoutFloor;
     }
 
+    public boolean isNoEscape() {
+        return this.noEscape;
+    }
+
+    public boolean isNoEllipsis() {
+        return this.noEllipsis;
+    }
+
     private void activate() {
         if (CommonUtils.isNull(options) || options.isEmpty())
             return;
@@ -65,6 +75,12 @@ public class PrintOptionAware {
                 break;
             case WITHOUT_EACH_BORDER_BOTTOM:
                 this.withoutFloor = true;
+                break;
+            case NO_ESCAPE:
+                this.noEscape = true;
+                break;
+            case NO_ELLIPSIS:
+                this.noEllipsis = true;
                 break;
             default:
                 throw new IllegalArgumentException("Not found print option.");

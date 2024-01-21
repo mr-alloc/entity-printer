@@ -29,11 +29,11 @@ public final class PrintConfigurator<I> {
         this.options = new HashSet<>();
     }
 
-    public static <I> PrintConfigurator<I> create(BuilderType builderType) {
-        return new PrintConfigurator<>(builderType);
+    public static <I> PrintConfigurator create(BuilderType builderType) {
+        return new PrintConfigurator(builderType);
     }
 
-    public static <I> PrintConfigurator<I> create() {
+    public static <I> PrintConfigurator create() {
         return new PrintConfigurator<>(BuilderType.ROW);
     }
 
@@ -92,6 +92,16 @@ public final class PrintConfigurator<I> {
 
     public PrintConfigurator<I> applyAll(PrintOption... printOptions) {
         this.options.addAll(Arrays.asList(printOptions));
+        return this;
+    }
+
+    public PrintConfigurator<I> noEscape() {
+        this.options.add(PrintOption.NO_ESCAPE);
+        return this;
+    }
+
+    public PrintConfigurator<I> noEllipsis() {
+        this.options.add(PrintOption.NO_ELLIPSIS);
         return this;
     }
 }

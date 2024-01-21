@@ -35,17 +35,13 @@ public interface CommonUtils {
                 .toArray(String[]::new);
     }
 
-    static void getWithSeparate(String[] lines, Consumer<Integer> valueConsumer) {
+    static void getWithSeparate(String[] lines, Consumer<Integer> lengthConsumer) {
         int maxLength = 0;
         for (String line : lines) {
-            int tabCount = 0;
-            for (char ch : line.toCharArray()) {
-                if (ch == '\t') tabCount++;
-            }
-            maxLength = Math.max(maxLength, line.length() + tabCount);
+            maxLength = Math.max(maxLength, line.length());
         }
 
-        valueConsumer.accept(maxLength);
+        lengthConsumer.accept(maxLength);
     }
 
     static String[] separateWithLineFeed(String original) {
@@ -58,5 +54,31 @@ public interface CommonUtils {
 
     static <T> boolean isPrintableEntity(Class<T> clazz) {
         return !isPrintableField(clazz);
+    }
+
+    static String[] separateWithSize(String strValue, int partitionSize) {
+        if (strValue.length() < partitionSize) return new String[]{ strValue };
+
+        int pageSize = (strValue.length() / partitionSize) + (strValue.length() % partitionSize == 0 ? 0 : 1);
+        String[] lines = new String[pageSize];
+        for (int i = 0; i < pageSize; i++) {
+            int start = i * partitionSize;
+            int end = Math.min(start + partitionSize, strValue.length());
+            lines[i] = strValue.substring(start, end);
+        }
+        return lines;
+    }
+
+    static int getMaxLength(String[] lines) {
+        return Arrays.stream(lines)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+    }
+
+    static String escapeWhiteSpace(String value) {
+        return value.replace("\n", "\\n")
+                .replace("\r", "")
+                .replace("\t", "\\t");
     }
 }
