@@ -20,7 +20,7 @@ public enum PrintOption {
     /**
      * 날짜 형식 지정
      */
-    DATETIME_FORMAT,
+    DATE_FORMAT,
 
     /**
      * 각 로우별 바닥 테두리 제거
@@ -34,6 +34,6 @@ public enum PrintOption {
     /**
      * ... 없이 출력
      */
-    NO_ELLIPSIS;
+    NO_ELLIPSIS, TIME_FORMAT;
 
 }

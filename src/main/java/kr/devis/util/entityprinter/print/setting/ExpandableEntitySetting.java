@@ -3,44 +3,60 @@ package kr.devis.util.entityprinter.print.setting;
 import kr.devis.util.entityprinter.constant.PrintOption;
 import kr.devis.util.entityprinter.print.PrintConfigurator;
 
-import java.time.format.DateTimeFormatter;
-
 public class ExpandableEntitySetting extends AbstractExpandableSetting<Integer> {
 
-    private final PrintConfigurator<Integer> printConfigurator = PrintConfigurator.create();
+    private final PrintConfigurator<Integer> printConfigurator = PrintConfigurator.<Integer>create();
 
     @Override
-    public PrintConfigurator<Integer> activateFields(Integer... fieldIndexes) {
-        return this.printConfigurator.activateFields(fieldIndexes);
+    public AbstractExpandableSetting<Integer> activateFields(Integer... fieldIndexes) {
+        this.printConfigurator.activateFields(fieldIndexes);
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> dateformat(DateTimeFormatter dateTimeFormatter) {
-        return this.printConfigurator.dateformat(dateTimeFormatter);
+    public AbstractExpandableSetting<Integer> dateformat(String pattern) {
+        this.printConfigurator.dateformat(pattern);
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> allowMultiLine() {
-        return this.printConfigurator.allowMultiLine();
+    public AbstractExpandableSetting<Integer> allowMultiLine() {
+        this.printConfigurator.allowMultiLine();
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> withoutFloor() {
-        return this.printConfigurator.withoutFloor();
+    public AbstractExpandableSetting<Integer> withoutFloor() {
+        this.printConfigurator.withoutFloor();
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> excludeDataType() {
-        return this.printConfigurator.excludeDataType();
+    public AbstractExpandableSetting<Integer> excludeDataType() {
+        this.printConfigurator.excludeDataType();
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> expand(PrintOption... printOptions) {
-        return this.printConfigurator.applyAll(printOptions);
+    public AbstractExpandableSetting<Integer> expand(PrintOption... printOptions) {
+        this.printConfigurator.applyAll(printOptions);
+        return this;
     }
 
     @Override
-    public PrintConfigurator<Integer> get() {
+    public AbstractExpandableSetting<Integer> noEscape() {
+        this.printConfigurator.noEscape();
+        return this;
+    }
+
+    @Override
+    public AbstractExpandableSetting<Integer> noEllipsis() {
+        this.printConfigurator.noEllipsis();
+        return this;
+    }
+
+    @Override
+    public PrintConfigurator<Integer> getConfig() {
         return this.printConfigurator;
     }
 }

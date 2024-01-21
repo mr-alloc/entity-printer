@@ -3,21 +3,23 @@ package kr.devis.util.entityprinter.print.setting;
 import kr.devis.util.entityprinter.constant.PrintOption;
 import kr.devis.util.entityprinter.print.PrintConfigurator;
 
-import java.time.format.DateTimeFormatter;
-
 public abstract class AbstractExpandableSetting<I> implements ExpandableSetting {
 
-    protected abstract PrintConfigurator<I> activateFields(final I... fieldIndexes);
+    public abstract AbstractExpandableSetting<I> activateFields(final I... fieldIndexes);
 
-    protected abstract PrintConfigurator<I> dateformat(final DateTimeFormatter dateTimeFormatter);
+    public abstract AbstractExpandableSetting<I> dateformat(final String pattern);
 
-    protected abstract PrintConfigurator<I> allowMultiLine();
+    public abstract AbstractExpandableSetting<I> allowMultiLine();
 
-    protected abstract PrintConfigurator<I> withoutFloor();
+    public abstract AbstractExpandableSetting<I> withoutFloor();
 
-    protected abstract PrintConfigurator<I> excludeDataType();
+    public abstract AbstractExpandableSetting<I> excludeDataType();
 
-    public abstract PrintConfigurator<I> expand(PrintOption... printOptions);
+    public abstract AbstractExpandableSetting<I> expand(PrintOption... printOptions);
 
-    public abstract PrintConfigurator<I> get();
+    public abstract AbstractExpandableSetting<I> noEscape();
+
+    public abstract AbstractExpandableSetting<I> noEllipsis();
+
+    public abstract PrintConfigurator<I> getConfig();
 }

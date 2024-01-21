@@ -34,6 +34,7 @@ public class ColumnValue {
 
     public void applyMultiline(String[] lines) {
         this.lineCount = lines.length;
+        this.lineLength = CommonUtils.getMaxLength(lines);
         this.firstLine = lines[0];
     }
 }

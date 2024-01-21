@@ -5,8 +5,8 @@ import kr.devis.util.entityprinter.print.field.manager.PrintableFieldManager;
 import kr.devis.util.entityprinter.print.field.manager.PrintableMapManager;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -59,11 +59,11 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
                 final Object field = row.get(fields[idx].getKey());
 
                 final Column column = super.columns.get(idx);
-                final String fieldName = column.getName();
                 final String strValue = getStringValue(field, column);
 
-                columnMap.put(fieldName, strValue);
+                columnMap.put(column.getName(), strValue);
             });
+
             super.columnMapList.add(columnMap);
         });
     }
@@ -72,12 +72,12 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     private Map<String, Object> getKeyModelWithInitStream(Object target, Class<?> typeClass) {
         Map<String, Object> keyModel;
 
-        if (!typeClass.isAssignableFrom(Map.class)) {
+        if (target instanceof Collection && !typeClass.isAssignableFrom(Map.class)) {
             throw new IllegalArgumentException("target's inner type is not Map.class.");
         }
 
-        if (List.class.isAssignableFrom(target.getClass())) {
-            List<Map<String, Object>> mapList = (List<Map<String, Object>>) target;
+        if (Collection.class.isAssignableFrom(target.getClass())) {
+            Collection<Map<String, Object>> mapList = (Collection<Map<String, Object>>) target;
             keyModel = mapList.stream().findFirst().orElseThrow(() ->
                     new IllegalArgumentException("Map object must be has element at least one."));
 

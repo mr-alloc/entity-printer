@@ -5,11 +5,7 @@ import kr.devis.util.entityprinter.constant.PrintOption;
 import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class PrintConfigurator<I> {
@@ -29,11 +25,11 @@ public final class PrintConfigurator<I> {
         this.options = new HashSet<>();
     }
 
-    public static <I> PrintConfigurator create(BuilderType builderType) {
-        return new PrintConfigurator(builderType);
+    public static <I> PrintConfigurator<I> create(BuilderType builderType) {
+        return new PrintConfigurator<>(builderType);
     }
 
-    public static <I> PrintConfigurator create() {
+    public static <I> PrintConfigurator<I> create() {
         return new PrintConfigurator<>(BuilderType.ROW);
     }
 
@@ -74,9 +70,9 @@ public final class PrintConfigurator<I> {
     }
 
 
-    public PrintConfigurator<I> dateformat(final DateTimeFormatter dateTimeFormatter) {
-        this.dateTimeFormatter = dateTimeFormatter;
-        this.options.add(PrintOption.DATETIME_FORMAT);
+    public PrintConfigurator<I> dateformat(final String pattern) {
+        this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        this.options.add(PrintOption.DATE_FORMAT);
         return this;
     }
 

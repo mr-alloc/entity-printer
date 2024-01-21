@@ -67,7 +67,7 @@ public class PrintOptionAware {
             case EXCEPT_COLUMN:
                 this.exceptColumn = true;
                 break;
-            case DATETIME_FORMAT:
+            case DATE_FORMAT:
                 this.dateTimeFormat = true;
                 break;
             case ALLOW_MULTILINE:

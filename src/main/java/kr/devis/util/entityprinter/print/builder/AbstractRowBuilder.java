@@ -13,7 +13,11 @@ import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
-import java.util.*;
+import java.time.temporal.UnsupportedTemporalTypeException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -31,7 +35,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     /**
      * 실제로 쌓일 문자열을 담는 StringBuilder
      */
-    protected final StringBuilder builder = new StringBuilder();
+    protected final StringBuilder builder = new StringBuilder(Resource.LINEFEED);
     protected final List<Column> columns = new ArrayList<>();
     /**
      * 컬럼의 정보를 담는 리스트
@@ -85,23 +89,28 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         String typeValue = typeControl(value);
 
         //이스케이프 문자 그대로 출력
-        String strValue = optionAware.isNoEscape()
-                ? typeValue
-                : CommonUtils.escapeWhiteSpace(typeValue);
+        String strValue = CommonUtils.escapeWhiteSpace(typeValue);
         //라인피드로 나눠서 라인개수를 확인하기때문에 replace 되지 않은 값으로 생성.
         ColumnValue columnValue = new ColumnValue(strValue);
         int lengthOfValue = strValue.length();
 
-        if (optionAware.isAllowMultiline()) {
-            if (optionAware.isNoEscape()) {
-
-            }
-            String[] lines = CommonUtils.separateWithSize(strValue, Resource.DEFAULT_MAX_LENGTH_PER_LINE);
-            lengthOfValue = CommonUtils.getMaxLength(lines);
-            columnValue.applyMultiline(lines);
+        if (optionAware.isNoEscape() && !optionAware.isAllowMultiline()) {
+            strValue = typeValue.split(Resource.LINEFEED)[0];
+            lengthOfValue = strValue.length();
         }
 
-        //멀티라인이 아니면서 최대길이를 넘어가면 줄임표를 붙여준다.
+        if (optionAware.isAllowMultiline()) {
+            String[] lines = optionAware.isNoEscape()
+                    ? CommonUtils.separateWithLineFeed(typeValue.replace("\t", "  "))
+                    : CommonUtils.separateWithSize(strValue, Resource.DEFAULT_MAX_LENGTH_PER_LINE);
+            columnValue.applyMultiline(lines);
+            lengthOfValue = columnValue.getLineLength();
+            if (optionAware.isNoEscape()) {
+                strValue = String.join(Resource.LINEFEED, lines);
+            }
+        }
+
+        //줄임이 아니면서 최대길이를 넘어가면 줄임표를 붙여준다.
         if (!optionAware.isNoEllipsis() && lengthOfValue > Resource.DEFAULT_MAX_LENGTH_PER_LINE) {
             strValue = columnValue.getFirstLine().substring(0, (Resource.DEFAULT_MAX_LENGTH_PER_LINE - Resource.ELLIPSIS.length())) + Resource.ELLIPSIS;
             lengthOfValue = Resource.DEFAULT_MAX_LENGTH_PER_LINE;
@@ -115,14 +124,16 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
     private String typeControl(Object value) {
         Object result;
-
-        if (value instanceof ChronoLocalDate)
-            result = ((ChronoLocalDate) value).format(optionAware.getDateFormatter());
-        else if (value instanceof ChronoLocalDateTime)
-            result = ((ChronoLocalDateTime) value).format(optionAware.getDateFormatter());
-        else
-            result = value;
-        //캐리지 리턴 삭제
+        try {
+            if (value instanceof ChronoLocalDate)
+                result = ((ChronoLocalDate) value).format(optionAware.getDateFormatter());
+            else if (value instanceof ChronoLocalDateTime)
+                result = ((ChronoLocalDateTime) value).format(optionAware.getDateFormatter());
+            else
+                result = value.toString();
+        } catch (UnsupportedTemporalTypeException temporalTypeException) {
+            result = value.toString();
+        }
         return result.toString();
     }
 
@@ -160,13 +171,14 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
                 Map<String, String[]> multiLineRow = nextRow.entrySet().stream().collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> {
-                            if (optionAware.isAllowMultiline()) {
-
+                            if (optionAware.isNoEscape()) {
+                                return CommonUtils.separateWithLineFeed(entry.getValue());
                             }
 
                             return CommonUtils.separateWithSize(entry.getValue(), Resource.DEFAULT_MAX_LENGTH_PER_LINE);
                         }
                 ));
+
                 IntStream.range(0, largestLine).forEach(line -> {
                     String[] columnValues = columns.stream().map(col -> {
                         String[] values = multiLineRow.get(col.getName());
