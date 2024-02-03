@@ -8,49 +8,49 @@ public class ExpandableEntitySetting extends AbstractExpandableSetting<Integer> 
     private final PrintConfigurator<Integer> printConfigurator = PrintConfigurator.<Integer>create();
 
     @Override
-    public AbstractExpandableSetting<Integer> activateFields(Integer... fieldIndexes) {
+    public ExpandableEntitySetting activateFields(Integer... fieldIndexes) {
         this.printConfigurator.activateFields(fieldIndexes);
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> dateformat(String pattern) {
+    public ExpandableEntitySetting dateformat(String pattern) {
         this.printConfigurator.dateformat(pattern);
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> allowMultiLine() {
+    public ExpandableEntitySetting allowMultiLine() {
         this.printConfigurator.allowMultiLine();
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> withoutFloor() {
+    public ExpandableEntitySetting withoutFloor() {
         this.printConfigurator.withoutFloor();
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> excludeDataType() {
+    public ExpandableEntitySetting excludeDataType() {
         this.printConfigurator.excludeDataType();
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> expand(PrintOption... printOptions) {
+    public ExpandableEntitySetting expand(PrintOption... printOptions) {
         this.printConfigurator.applyAll(printOptions);
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> noEscape() {
+    public ExpandableEntitySetting noEscape() {
         this.printConfigurator.noEscape();
         return this;
     }
 
     @Override
-    public AbstractExpandableSetting<Integer> noEllipsis() {
+    public ExpandableEntitySetting noEllipsis() {
         this.printConfigurator.noEllipsis();
         return this;
     }

@@ -3,6 +3,7 @@ package kr.devis.util.entityprinter.print.field.manager;
 import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 public class DefaultPrintableFieldManager implements PrintableFieldManager<Integer, Field> {
@@ -30,6 +31,7 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
         this.fields = fieldIndexes.stream()
                 .filter(i -> this.fields.length >= i)
                 .map(i -> this.fields[i - 1])
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .filter(field -> CommonUtils.isPrintableField(field.getType()))
                 .toArray(Field[]::new);
     }
