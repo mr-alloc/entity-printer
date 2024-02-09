@@ -4,7 +4,9 @@ import kr.devis.util.entityprinter.util.CommonUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DefaultPrintableFieldManager implements PrintableFieldManager<Integer, Field> {
 
@@ -13,7 +15,13 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
 
     public DefaultPrintableFieldManager(final Class<?> typeCLass) {
         this.typeClass = typeCLass;
-        this.fields = typeCLass.getDeclaredFields();
+        this.fields = filterForPrintable(typeCLass.getDeclaredFields());
+    }
+
+    private Field[] filterForPrintable(Field[] declaredFields) {
+        return Arrays.stream(declaredFields)
+                .filter(fieldFilter())
+                .toArray(Field[]::new);
     }
 
     public Class<?> getTypeClass() {
@@ -21,7 +29,7 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
     }
 
     @Override
-    public Field [] getActivatedFields() {
+    public Field[] getActivatedFields() {
         return this.fields;
     }
 
@@ -31,9 +39,14 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
         this.fields = fieldIndexes.stream()
                 .filter(i -> this.fields.length >= i)
                 .map(i -> this.fields[i - 1])
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                .filter(field -> CommonUtils.isPrintableField(field.getType()))
+                .filter(fieldFilter())
                 .toArray(Field[]::new);
+    }
+
+    private Predicate<Field> fieldFilter() {
+        return (field ->
+                CommonUtils.isPrintableField(field.getType()) &&
+                        !Modifier.isStatic(field.getModifiers()));
     }
 
     @Override
