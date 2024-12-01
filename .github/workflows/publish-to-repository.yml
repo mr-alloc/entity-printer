@@ -21,7 +21,7 @@ jobs:
 
       - name: Configure GPG Key
         env:
-          SIGNING_KEY: ${{ secrets.GPG_KEY_ID }}
+          SIGNING_KEY: ${{ secrets.ASCII_ARMORED_KEY }}
         run: echo "$SIGNING_KEY" | gpg --import
 
       - name: OSSRH Maven central 저장소 배포
