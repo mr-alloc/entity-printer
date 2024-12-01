@@ -11,7 +11,7 @@ ext {
 }
 
 // Util Group
-group'kr.devis.util'
+group 'kr.devis'
 version PUBLISH_VERSION
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
