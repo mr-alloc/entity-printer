@@ -20,10 +20,13 @@ jobs:
           distribution: 'adopt'
 
       - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v1
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.ASCII_ARMORED_KEY }}
-          PASSPHRASE: ${{ secrets.GPG_KEY_PASSWORD }}
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.ASCII_ARMORED_KEY }}
+          passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
+
+      - name: List keys
+        run: gpg -K
 
       - name: OSSRH Maven central 저장소 배포
         env:
