@@ -19,10 +19,19 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
-      - name: Configure GPG Key
+      - name: Set up GPG
         env:
+          SIGNING_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           SIGNING_KEY: ${{ secrets.ASCII_ARMORED_KEY }}
-        run: echo "$SIGNING_KEY" | gpg --import
+        run: |
+          echo "$SIGNING_KEY" | gpg --batch --import
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          echo "no-tty" >> ~/.gnupg/gpg.conf
+
+      - name: Configure GPG Key
+        run: |
+          gpg --batch --yes --default-key "$SIGNING_KEY_ID"
+          gpg --list-keys
 
       - name: OSSRH Maven central 저장소 배포
         env:
