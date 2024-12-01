@@ -19,8 +19,17 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
+      - name: Set GPG signing key
+        env:
+          SIGNING_KEY: ${{ secrets.GPG_KEY_ID }}
+          SIGNING_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
+        run: |
+          echo "$SIGNING_KEY" | gpg --import
+          echo "allow-loopback-pinentry >> ~/.gnupg/gpg.conf
+          ehco "use-agent" | gpg-connect-agent
+
       - name: Gradle Wrapper 유효성 검증
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v3
 
       - name: OSSRH Maven central 저장소 배포
         run: ./gradlew publish
