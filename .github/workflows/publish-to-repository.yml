@@ -25,8 +25,9 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
         run: |
           echo "$SIGNING_KEY" | gpg --import
-          echo "allow-loopback-pinentry >> ~/.gnupg/gpg.conf
-          ehco "use-agent" | gpg-connect-agent
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg.conf
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          echo RELOADAGENT | gpg-connect-agent
 
       - name: Gradle Wrapper 유효성 검증
         uses: gradle/wrapper-validation-action@v3
