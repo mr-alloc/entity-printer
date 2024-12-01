@@ -19,9 +19,14 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
+      - name: Configure GPG Key
+        env:
+          SIGNING_KEY: ${{ secrets.GPG_KEY_ID }}
+        run: echo "$SIGNING_KEY" | gpg --import
+
       - name: OSSRH Maven central 저장소 배포
         env:
+          SIGNING_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: ./gradlew publish
