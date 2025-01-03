@@ -3,6 +3,8 @@ package io.taech.print.impl;
 import io.taech.print.Column;
 import io.taech.print.EntityPrinter;
 import io.taech.print.Wrapper;
+import io.taech.print.builder.BasicRowBuilder;
+import io.taech.print.builder.RowBuilder;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -25,13 +27,14 @@ public class DefaultPrinter implements EntityPrinter {
 
     private static final String PRINT_TARGET_IS_NULL = "This print target is null.";
 
-
+    private RowBuilder rowBuilder = new BasicRowBuilder();
 
     @Override
     public String draw(final Object obj) {
+        rowBuilder.prepare(obj);
 
         if (obj instanceof List) {
-            List<Object> listObject = (List) obj;
+            final List<Object> listObject = (List) obj;
             return printList(listObject);
         }
 
@@ -39,7 +42,6 @@ public class DefaultPrinter implements EntityPrinter {
     }
 
     private String printList(final List<Object> list) {
-        long start = System.currentTimeMillis();
         if (list.isEmpty())
             return PRINT_TARGET_IS_NULL;
 
@@ -63,8 +65,6 @@ public class DefaultPrinter implements EntityPrinter {
 
         //== 컬럼 값 ==//
         stackBody(columns, columnMapList, builder, layer);
-        float result = (System.currentTimeMillis() - start) / 1000.0f;
-        builder.append(String.format("Printed Stop Watch: %.4fsec\n", result));
         return builder.toString();
     }
 
@@ -109,6 +109,7 @@ public class DefaultPrinter implements EntityPrinter {
                 final String fieldName = field.getName();
                 Integer length = strValue.length();
                 final Column column = columns.get(i);
+
                 if (length > DEFAULT_MAX_COLUMN_LENGTH) {
                     strValue = strValue.substring(0, (DEFAULT_MAX_COLUMN_LENGTH - ELLIPSIS.length())).concat(ELLIPSIS);
                     length = DEFAULT_MAX_COLUMN_LENGTH;
