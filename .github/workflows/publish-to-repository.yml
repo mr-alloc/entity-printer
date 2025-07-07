@@ -2,6 +2,8 @@ name: publish-to-repository
 run-name: Publish artifacts to repository
 on:
   push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*'
     branches:
       - master
 jobs:
@@ -10,6 +12,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Check deploy condition
+        id: check_condition
+        run: |
+          if git branch --contains ${{ github.ref_name }} | grep -q "master\|main"; then
+            echo "on_master=true" >> $GITHUB_OUTPUT
+          else
+            echo "on_master=false" >> $GITHUB_OUTPUT
+            echo "Tag is not on master branch. Skipping deployment."
+            exit 1
+          fi
+      - name: Get version from tag
+        if: steps.check_condition.outputs.on_master == 'true'
+        id: get_version
+        run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
       - name: Permission for gradlew with chmod
         run: chmod +x ./gradlew

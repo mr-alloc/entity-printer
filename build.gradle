@@ -11,7 +11,7 @@ ext {
 }
 
 // Util Group
-group 'kr.devis'
+group 'io.alloc'
 version PUBLISH_VERSION
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
