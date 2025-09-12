@@ -25,7 +25,6 @@ repositories {
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 publishing {
