@@ -16,11 +16,14 @@ jobs:
       - name: Check deploy condition
         id: check_condition
         run: |
-          if git branch --contains ${{ github.ref_name }} | grep -q "master\|main"; then
+          if git branch -r --contains ${{ github.sha }} | grep -q "origin/master\|origin/main"; then
+            echo "✅ Tag is on master/main branch"
             echo "on_master=true" >> $GITHUB_OUTPUT
           else
+            echo "❌ Tag is not on master/main branch"
+            echo "Branches containing this tag:"
+            git branch -r --contains ${{ github.ref_name }}
             echo "on_master=false" >> $GITHUB_OUTPUT
-            echo "Tag is not on master branch. Skipping deployment."
             exit 1
           fi
       - name: Get version from tag
