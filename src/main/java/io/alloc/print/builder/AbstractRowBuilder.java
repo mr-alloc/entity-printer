@@ -126,7 +126,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
             if (value instanceof ChronoLocalDate)
                 result = ((ChronoLocalDate) value).format(optionAware.getDateFormatter());
             else if (value instanceof ChronoLocalDateTime)
-                result = ((ChronoLocalDateTime) value).format(optionAware.getDateFormatter());
+                result = ((ChronoLocalDateTime<?>) value).format(optionAware.getDateFormatter());
             else
                 result = value.toString();
         } catch (UnsupportedTemporalTypeException temporalTypeException) {
