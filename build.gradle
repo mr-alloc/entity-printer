@@ -11,9 +11,13 @@ ext {
 }
 
 // Util Group
-group 'io.alloc'
+group PUBLISH_GROUP_ID
 version PUBLISH_VERSION
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()

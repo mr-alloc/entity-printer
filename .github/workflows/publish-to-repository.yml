@@ -32,8 +32,8 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: OSSRH Maven central 저장소 배포
         if: steps.check_condition.outputs.has_version_tag == 'true'  # 조건 추가
