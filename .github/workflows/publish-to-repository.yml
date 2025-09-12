@@ -1,7 +1,9 @@
 name: publish-to-repository
 run-name: Publish artifacts to repository
 on:
-  push:
+    push:
+    branches:
+      - master
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
 jobs:
@@ -16,18 +18,14 @@ jobs:
       - name: Check deploy condition
         id: check_condition
         run: |
-          if git branch -r --contains ${{ github.sha }} | grep -q "origin/master\|origin/main"; then
-            echo "✅ Tag is on master/main branch"
-            echo "on_master=true" >> $GITHUB_OUTPUT
+          if git describe --exact-match --tags HEAD 2>/dev/null | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+            echo "has_version_tag=true" >> $GITHUB_OUTPUT
           else
-            echo "❌ Tag is not on master/main branch"
-            echo "Branches containing this tag:"
-            git branch -r --contains ${{ github.ref_name }}
-            echo "on_master=false" >> $GITHUB_OUTPUT
-            exit 1
+            echo "has_version_tag=false" >> $GITHUB_OUTPUT
           fi
+
       - name: Get version from tag
-        if: steps.check_condition.outputs.on_master == 'true'
+        if: steps.check_condition.outputs.has_version_tag  == 'true'
         id: get_version
         run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
@@ -39,17 +37,6 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
-      - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.ASCII_ARMORED_KEY }}
-          passphrase: ${{ secrets.GPG_KEY_PASSWORD }}
-
-      - name: List keys
-        run: gpg -K
-
       - name: OSSRH Maven central 저장소 배포
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: ./gradlew publish
+        if: steps.check_condition.outputs.has_version_tag == 'true'  # 조건 추가
+        run: ./gradlew jreleaserFullRelease

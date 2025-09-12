@@ -59,15 +59,7 @@ publishing {
     }
     repositories {
         maven {
-            // 실행시 주입 -PossrhUsername=xxx -PossrhPassword=xxx
-            credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
-            }
-            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/"
-
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            url = layout.buildDirectory.dir('staging-deploy')
         }
     }
 }
