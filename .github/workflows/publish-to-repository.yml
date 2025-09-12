@@ -1,11 +1,9 @@
 name: publish-to-repository
 run-name: Publish artifacts to repository
 on:
-    push:
+  push:
     branches:
       - master
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+*'
 jobs:
   publish-artifact-to-repository:
     runs-on: ubuntu-22.04
