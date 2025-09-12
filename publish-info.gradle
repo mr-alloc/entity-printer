@@ -1,5 +1,5 @@
 ext {
-    PUBLISH_GROUP_ID = 'io.alloc'
+    PUBLISH_GROUP_ID = 'io.alloc.utils'
     PUBLISH_VERSION = System.getProperty('VERSION')
     PUBLISH_ARTIFACT_ID = 'entity-printer'
     PUBLISH_DESCRIPTION = 'Simple Entity Printer'
@@ -7,9 +7,9 @@ ext {
     PUBLISH_LICENSE_NAME = 'The Apache License, Version 2.0'
     PUBLISH_LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
     PUBLISH_DEVELOPER_ID = 'mr-alloc'
-    PUBLISH_DEVELOPER_NAME = 'Tae Gu Jeon'
+    PUBLISH_DEVELOPER_NAME = 'Mr. Allocator'
     PUBLISH_DEVELOPER_EMAIL = 'mr.allocater@gmail.com'
-    PUBLISH_SCM_CONNECTION = 'scm:git:github.com/mr-alloc/entity-printer.git'
-    PUBLISH_SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com:mr-alloc/entity-printer.git'
+    PUBLISH_SCM_CONNECTION = 'scm:git:https://github.com/mr-alloc/entity-printer.git'
+    PUBLISH_SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com/mr-alloc/entity-printer.git'
     PUBLISH_SCM_URL = 'https://github.com/mr-alloc/entity-printer'
 }
