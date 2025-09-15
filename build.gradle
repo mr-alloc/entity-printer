@@ -70,6 +70,22 @@ publishing {
     }
 }
 
+jreleaser {
+    project {
+         version = project.version
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    host = 'CENTRAL_PORTAL'
+                }
+            }
+        }
+    }
+}
+
 javadoc {
     options.encoding = 'UTF-8'
     if (JavaVersion.current().isJava9Compatible()) {
