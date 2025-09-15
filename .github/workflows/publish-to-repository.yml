@@ -16,7 +16,7 @@ jobs:
       - name: Check deploy condition
         id: check_condition
         run: |
-          if git describe --exact-match --tags HEAD 2>/dev/null | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+          if git describe --exact-match --tags HEAD 2>/dev/null | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+'; then
             echo "has_version_tag=true" >> $GITHUB_OUTPUT
           else
             echo "has_version_tag=false" >> $GITHUB_OUTPUT

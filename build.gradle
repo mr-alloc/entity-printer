@@ -25,7 +25,10 @@ repositories {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
+
+
 
 publishing {
     publications {
@@ -68,6 +71,7 @@ publishing {
 }
 
 javadoc {
+    options.encoding = 'UTF-8'
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
