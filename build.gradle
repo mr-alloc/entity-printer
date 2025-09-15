@@ -91,6 +91,7 @@ jreleaser {
     }
 }
 
+
 javadoc {
     options.encoding = 'UTF-8'
     if (JavaVersion.current().isJava9Compatible()) {
