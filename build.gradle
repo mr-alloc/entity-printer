@@ -71,14 +71,19 @@ publishing {
 }
 
 jreleaser {
-    project {
-         version = project.version
+    signing {
+        active = 'ALWAYS'
+        armored = true
     }
 
     deploy {
         maven {
             mavenCentral {
-                host = 'CENTRAL_PORTAL'
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
             }
         }
     }
