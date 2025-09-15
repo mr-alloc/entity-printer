@@ -78,9 +78,7 @@ jreleaser {
     deploy {
         maven {
             mavenCentral {
-                sonatype {
-                    host = 'CENTRAL_PORTAL'
-                }
+                host = 'CENTRAL_PORTAL'
             }
         }
     }
