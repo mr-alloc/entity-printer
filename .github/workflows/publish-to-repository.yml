@@ -27,8 +27,8 @@ jobs:
         run: |
           # 현재 HEAD에 태그가 있는지 확인
           TAG_NAME=$(git describe --exact-match --tags HEAD 2>/dev/null || echo "")
-          VERSION=${GITHUB_REF#refs/tags/v}
-          if [[ $VERSION -z ]]; then
+          VERSION=${TAG_NAME#v}
+          if [[ -z $VERSION ]]; then
             echo "has_version_tag=true" >> $GITHUB_OUTPUT
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
