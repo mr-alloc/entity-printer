@@ -16,7 +16,8 @@ jobs:
       - name: Check deploy condition
         id: check_condition
         run: |
-          if git describe --exact-match --tags HEAD 2>/dev/null | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+'; then
+          TAG_NAME=$(git describe --exact-match --tags HEAD 2>/dev/null | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+')
+          if $TAG_NAME; then
             echo "has_version_tag=true" >> $GITHUB_OUTPUT
           else
             echo "has_version_tag=false" >> $GITHUB_OUTPUT
@@ -37,4 +38,4 @@ jobs:
 
       - name: OSSRH Maven central 저장소 배포
         if: steps.check_condition.outputs.has_version_tag == 'true'  # 조건 추가
-        run: ./gradlew jreleaserFullRelease -Pversion=${{ github.ref_name }}
+        run: ./gradlew jreleaserFullRelease -Pversion=$TAG_NAME
