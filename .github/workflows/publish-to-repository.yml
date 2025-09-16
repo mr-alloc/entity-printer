@@ -45,4 +45,4 @@ jobs:
         run: |
           export GPG_TTY=$(tty)
           VERSION="${{ steps.check_condition.outputs.version }}"
-          ./gradlew jreleaserFullRelease -Pversion=$VERSION
+          ./gradlew jreleaserFullRelease -PVersion=$VERSION
