@@ -63,6 +63,12 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            //로커 저장소 설정이 있어야, publishMavenPublicationToMavenRepository 실행 가능
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
 }
 
 jreleaser {
@@ -78,7 +84,6 @@ jreleaser {
                 sonatype {
                     active = 'ALWAYS'
                     url = 'https://central.sonatype.com/api/v1/publisher'
-                    stagingRepository('build/staging-deploy')
                 }
             }
         }
