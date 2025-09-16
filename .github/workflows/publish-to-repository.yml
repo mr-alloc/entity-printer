@@ -41,8 +41,7 @@ jobs:
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+          JRELEASER_PROJECT_VERSION: ${{ steps.check_condition.outputs.version }}
         run: |
           export GPG_TTY=$(tty)
-          VERSION="${{ steps.check_condition.outputs.version }}"
-          echo "Artifact version: $VERSION"
-          ./gradlew jreleaserFullRelease -PVERSION=$VERSION
+          ./gradlew jreleaserFullRelease
