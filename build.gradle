@@ -68,6 +68,7 @@ publishing {
 jreleaser {
     //Version must be injected for based on tag versioning
     version = System.getenv("VERSION")
+    println("Artifact version in build.gradle: "+System.getenv("VERSION"))
     signing {
         active = 'ALWAYS'
         armored = true
