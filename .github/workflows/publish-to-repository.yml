@@ -46,6 +46,8 @@ jobs:
         run: |
           export GPG_TTY=$(tty)
           VERSION="${{ steps.check_condition.outputs.version }}"
+          ./gradlew publishMavenPublicationToMavenRepository -PVERSION=$VERSION
+          echo "✅ Upload artifact with staging repository."
           echo "Artifact version: $VERSION"
           ./gradlew jreleaseConfig -PVERSION=$VERSION
           ./gradlew jreleaserFullRelease -PVERSION=$VERSION
