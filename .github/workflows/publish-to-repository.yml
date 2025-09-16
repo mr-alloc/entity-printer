@@ -44,4 +44,6 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ steps.check_condition.outputs.version }}
         run: |
           export GPG_TTY=$(tty)
-          ./gradlew jreleaserFullRelease
+          VERSION="${{ steps.check_condition.outputs.version }}"
+          echo "Artifact version: $VERSION"
+          ./gradlew jreleaserFullRelease -PVERSION=$VERSION
