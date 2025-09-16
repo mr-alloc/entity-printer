@@ -44,5 +44,5 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
         run: |
           export GPG_TTY=$(tty)
-          VERSION="${{ steps.get_version.outputs.version }}"
+          VERSION="${{ steps.check_condition.outputs.version }}"
           ./gradlew jreleaserFullRelease -Pversion=$VERSION
