@@ -23,11 +23,10 @@ interface IEntityPrinter {
      *
      * @param entity       출력될 객체 (Entity to be printed)
      * @param configurator 출력 설정 정보
-     * @param <I>          entity의 인덱스 타입. Map같은 경우 String이 Key로 들어가므로 인덱스가 String으로 잡히지만, 일반 객체는 field 순서(Integer)로 잡힌다.
      * @param <T>          entity의 타입
      * @return formatted data in table as string.
      */
-    <I, T> String drawEntity(final T entity, final PrintConfigurator<I> configurator);
+    <T> String drawEntity(final T entity, final PrintConfigurator configurator);
 
     /**
      * @param entities collection of entities
@@ -44,10 +43,9 @@ interface IEntityPrinter {
      * @param entities   출력된 객체 목록
      * @param configured 출력 설정 정보
      * @param clazz      컬렉션 내 객체의 타입
-     * @param <I>        entity의 인덱스 타입. Map같은 경우 String이 Key로 들어가므로 인덱스가 String으로 잡히지만, 일반 객체는 field 순서(Integer)로 잡힌다.
      * @param <T>        entity의 타입
      * @return formatted collection data in table as string.
      */
-    <I, T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz);
+    <T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator configured, Class<? extends T> clazz);
 
 }

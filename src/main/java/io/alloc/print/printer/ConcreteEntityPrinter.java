@@ -21,7 +21,7 @@ class ConcreteEntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <I, T> String drawEntity(final T entity, final PrintConfigurator<I> configurator) {
+    public <T> String drawEntity(final T entity, final PrintConfigurator configurator) {
         if (!CommonUtils.isPrintableEntity(entity.getClass()))
             return entity.toString();
 
@@ -32,7 +32,7 @@ class ConcreteEntityPrinter implements IEntityPrinter {
         return drawEntity(entity, configurator, entity.getClass());
     }
 
-    private <I, T> String drawEntity(final T entity, final PrintConfigurator<I> configured, Class<?> clazz) {
+    private <I, T> String drawEntity(final T entity, final PrintConfigurator configured, Class<?> clazz) {
         BuilderType builderType = Map.class.isAssignableFrom(clazz)
                 ? BuilderType.MAP
                 : BuilderType.ROW;
@@ -40,8 +40,8 @@ class ConcreteEntityPrinter implements IEntityPrinter {
         return drawEntity(entity, configured, clazz, builderType);
     }
 
-    private <I, T> String drawEntity(final T entity, final PrintConfigurator<I> configurator, Class<?> clazz, BuilderType builderType) {
-        final PrintConfigurator<I> toBeConfigured = inspectType(configurator, builderType);
+    private <I, T> String drawEntity(final T entity, final PrintConfigurator configurator, Class<?> clazz, BuilderType builderType) {
+        final PrintConfigurator toBeConfigured = inspectType(configurator, builderType);
 
         return RowBuilderProvider.getInstance()
                 .provide(toBeConfigured)
@@ -55,7 +55,7 @@ class ConcreteEntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <I, T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator<I> configured, Class<? extends T> clazz) {
+    public <T> String drawCollection(final Collection<? extends T> entities, final PrintConfigurator configured, Class<? extends T> clazz) {
         BuilderType builderType = Map.class.isAssignableFrom(clazz)
                 ? BuilderType.MAP
                 : BuilderType.ROW;
@@ -63,8 +63,8 @@ class ConcreteEntityPrinter implements IEntityPrinter {
         return drawCollection(entities, configured, clazz, builderType);
     }
 
-    private <I, T> String drawCollection(final Collection<?> entities, final PrintConfigurator<I> configurator, Class<T> clazz, BuilderType builderType) {
-        final PrintConfigurator<I> toBeConfigured = inspectType(configurator, builderType);
+    private <T> String drawCollection(final Collection<?> entities, final PrintConfigurator configurator, Class<T> clazz, BuilderType builderType) {
+        final PrintConfigurator toBeConfigured = inspectType(configurator, builderType);
 
         return RowBuilderProvider.getInstance()
                 .provide(toBeConfigured)
@@ -72,7 +72,7 @@ class ConcreteEntityPrinter implements IEntityPrinter {
                 .build();
     }
 
-    private <I> PrintConfigurator<I> inspectType(final PrintConfigurator<I> configured, BuilderType builderType) {
+    private <I> PrintConfigurator inspectType(final PrintConfigurator configured, BuilderType builderType) {
         return CommonUtils.isNull(configured)
                 ? PrintConfigurator.create(builderType)
                 : configured.builderType(builderType);

@@ -3,7 +3,11 @@ package io.alloc.print.setting;
 
 public interface ExpandableSetting {
 
-    ExpandableMapSetting EXPANDABLE_MAP_SETTING = new ExpandableMapSetting();
+    static ExpandableEntitySetting entity() {
+        return new ExpandableEntitySetting();
+    }
 
-    ExpandableEntitySetting EXPANDABLE_ENTITY_SETTING = new ExpandableEntitySetting();
+    static ExpandableMapSetting map() {
+        return new ExpandableMapSetting();
+    }
 }

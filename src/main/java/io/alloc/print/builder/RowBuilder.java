@@ -4,14 +4,12 @@ import io.alloc.print.PrintConfigurator;
 
 /**
  * Row를 만들기 위한 빌더 인터페이스
- *
- * @param <I> 인덱스 타입
  */
-public interface RowBuilder<I> {
+public interface RowBuilder {
 
-    RowBuilder<I> proceed(Object target, Class<?> type);
+    RowBuilder proceed(Object target, Class<?> type);
 
-    RowBuilder<I> config(PrintConfigurator<I> configurator);
+    RowBuilder config(PrintConfigurator configurator);
 
     String build();
 }

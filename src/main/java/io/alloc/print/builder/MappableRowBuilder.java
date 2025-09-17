@@ -8,22 +8,22 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class MappableRowBuilder extends AbstractRowBuilder<String> {
+public class MappableRowBuilder extends AbstractRowBuilder<Entry<String, Object>> {
 
-    private PrintableFieldManager<String, Map.Entry<String, Object>> fieldManager;
+    private PrintableFieldManager<Entry<String, Object>> fieldManager;
     private Supplier<Stream<Map<String, Object>>> streamSupplier;
 
     @Override
-    public RowBuilder<String> proceed(Object target, Class<?> typeClass) {
+    public RowBuilder proceed(Object target, Class<?> typeClass) {
         this.fieldManager = new PrintableMapManager<>(typeClass, getKeyModelWithInitStream(target, typeClass));
         super.initialize();
         return this;
     }
-
 
     @Override
     protected void calculateColumnInfo() {
@@ -46,13 +46,13 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     }
 
     @Override
-    protected PrintableFieldManager<String, Map.Entry<String, Object>> getCurrentFieldManager() {
+    protected PrintableFieldManager<Entry<String, Object>> getCurrentFieldManager() {
         return this.fieldManager;
     }
 
     private void setFieldValues() {
         this.streamSupplier.get().forEach(row -> {
-            Map.Entry<String, Object>[] fields = this.fieldManager.getActivatedFields();
+            Entry<String, Object>[] fields = this.fieldManager.getActivatedFields();
             Map<String, String> columnMap = new LinkedHashMap<>();
 
             IntStream.range(0, fields.length).forEach(idx -> {
@@ -69,6 +69,7 @@ public class MappableRowBuilder extends AbstractRowBuilder<String> {
     }
 
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getKeyModelWithInitStream(Object target, Class<?> typeClass) {
         Map<String, Object> keyModel;
 

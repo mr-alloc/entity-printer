@@ -2,15 +2,13 @@ package io.alloc.print.field.manager;
 
 import io.alloc.util.CommonUtils;
 
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class PrintableMapManager<V, W> implements PrintableFieldManager<String, Map.Entry<String, Object>> {
+public class PrintableMapManager<V, W> implements PrintableFieldManager<Entry<String, Object>> {
 
-    private Class<W> typeClass;
+    private final Class<W> typeClass;
     private Map<String, V> fieldMap;
 
     public PrintableMapManager(final Class<W> typeClass, final Map<String, V> fieldMap) {
@@ -20,16 +18,17 @@ public class PrintableMapManager<V, W> implements PrintableFieldManager<String, 
 
 
     @Override
-    public void activatePrintableFields(List<String> fieldIndexes) {
-        this.fieldMap = fieldIndexes.stream()
+    public void activatePrintableFields(Set<String> fieldNames) {
+        this.fieldMap = fieldNames.stream()
                 .filter(key -> this.fieldMap.containsKey(key) && CommonUtils.isPrintableField(this.fieldMap.get(key).getClass()))
                 .map(key -> new AbstractMap.SimpleEntry<>(key, this.fieldMap.get(key)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (a, b) -> a, LinkedHashMap::new));
     }
 
     @Override
-    public Map.Entry<String, Object>[] getActivatedFields() {
-        return fieldMap.entrySet().toArray(new Map.Entry[0]);
+    @SuppressWarnings("unchecked")
+    public Entry<String, Object>[] getActivatedFields() {
+        return fieldMap.entrySet().toArray(new Entry[0]);
     }
 
     @Override

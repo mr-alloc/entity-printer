@@ -207,8 +207,8 @@ if you set other type of entity differ to last parameter class, it will print li
 
 * Activate specific column
   ```java
-    config.activateFields("user", "time")
-        .getConfig();
+  config.activateFields("user", "time")
+      .getConfig();
   ```
   **Result**
   ```

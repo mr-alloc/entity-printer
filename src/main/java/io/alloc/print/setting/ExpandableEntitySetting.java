@@ -3,13 +3,13 @@ package io.alloc.print.setting;
 import io.alloc.constant.PrintOption;
 import io.alloc.print.PrintConfigurator;
 
-public class ExpandableEntitySetting extends AbstractExpandableSetting<Integer> {
+public class ExpandableEntitySetting extends AbstractExpandableSetting {
 
-    private final PrintConfigurator<Integer> printConfigurator = PrintConfigurator.<Integer>create();
+    private final PrintConfigurator printConfigurator = PrintConfigurator.create();
 
     @Override
-    public ExpandableEntitySetting activateFields(Integer... fieldIndexes) {
-        this.printConfigurator.activateFields(fieldIndexes);
+    public ExpandableEntitySetting activateFields(String... fieldNames) {
+        this.printConfigurator.activateFields(fieldNames);
         return this;
     }
 
@@ -56,7 +56,7 @@ public class ExpandableEntitySetting extends AbstractExpandableSetting<Integer> 
     }
 
     @Override
-    public PrintConfigurator<Integer> getConfig() {
+    public PrintConfigurator getConfig() {
         return this.printConfigurator;
     }
 }

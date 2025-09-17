@@ -19,7 +19,7 @@ public final class EntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <I, T> String drawEntity(T entity, PrintConfigurator<I> configurator) {
+    public <T> String drawEntity(T entity, PrintConfigurator configurator) {
         return protect(() -> concretePrinter.drawEntity(entity, configurator));
     }
 
@@ -29,7 +29,7 @@ public final class EntityPrinter implements IEntityPrinter {
     }
 
     @Override
-    public <I, T> String drawCollection(Collection<? extends T> entities, PrintConfigurator<I> configured, Class<? extends T> clazz) {
+    public <T> String drawCollection(Collection<? extends T> entities, PrintConfigurator configured, Class<? extends T> clazz) {
         return protect(() -> concretePrinter.drawCollection(entities, configured, clazz));
     }
 

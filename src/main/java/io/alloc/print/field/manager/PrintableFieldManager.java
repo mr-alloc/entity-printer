@@ -1,10 +1,11 @@
 package io.alloc.print.field.manager;
 
 import java.util.List;
+import java.util.Set;
 
-public interface PrintableFieldManager<I, F> {
+public interface PrintableFieldManager<F> {
 
-    void activatePrintableFields(List<I> fieldIndexes);
+    void activatePrintableFields(Set<String> fieldIndexes);
 
     F [] getActivatedFields();
 

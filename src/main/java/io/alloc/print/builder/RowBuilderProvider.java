@@ -7,21 +7,23 @@ import java.lang.reflect.Constructor;
 
 public class RowBuilderProvider {
 
-    private static RowBuilderProvider provider = new RowBuilderProvider();
+    private static final RowBuilderProvider PROVIDER = new RowBuilderProvider();
+
 
     private RowBuilderProvider() {
     }
 
     public static RowBuilderProvider getInstance() {
-        return provider;
+        return PROVIDER;
     }
 
-    public <I> RowBuilder<I> provide(final PrintConfigurator<I> configurator) {
+    @SuppressWarnings("unchecked")
+    public <I> RowBuilder provide(final PrintConfigurator configurator) {
         try {
             final Class<? extends RowBuilder> clazz = BuilderType.get(configurator.getBuilderType());
             final Constructor<? extends RowBuilder> constructor = clazz.getConstructor();
 
-            RowBuilder<I> rowBuilder = constructor.newInstance();
+            RowBuilder rowBuilder = constructor.newInstance();
             return rowBuilder.config(configurator);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());

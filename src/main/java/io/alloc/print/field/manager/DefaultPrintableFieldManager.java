@@ -6,9 +6,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
-public class DefaultPrintableFieldManager implements PrintableFieldManager<Integer, Field> {
+public class DefaultPrintableFieldManager implements PrintableFieldManager<Field> {
 
     private final Class<?> typeClass;
     private Field[] fields;
@@ -35,11 +36,8 @@ public class DefaultPrintableFieldManager implements PrintableFieldManager<Integ
 
 
     @Override
-    public void activatePrintableFields(final List<Integer> fieldIndexes) {
-        this.fields = fieldIndexes.stream()
-                .filter(i -> this.fields.length >= i)
-                .map(i -> this.fields[i - 1])
-                .filter(fieldFilter())
+    public void activatePrintableFields(final Set<String> fieldNames) {
+        this.fields = Arrays.stream(this.fields).filter(field -> fieldNames.contains(field.getName()))
                 .toArray(Field[]::new);
     }
 

@@ -4,9 +4,9 @@ import io.alloc.constant.BuilderType;
 import io.alloc.constant.PrintOption;
 import io.alloc.print.PrintConfigurator;
 
-public class ExpandableMapSetting extends AbstractExpandableSetting<String> {
+public class ExpandableMapSetting extends AbstractExpandableSetting {
 
-    private final PrintConfigurator<String> printConfigurator = PrintConfigurator.create(BuilderType.MAP);
+    private final PrintConfigurator printConfigurator = PrintConfigurator.create(BuilderType.MAP);
 
     @Override
     public ExpandableMapSetting activateFields(String... columnNames) {
@@ -57,7 +57,7 @@ public class ExpandableMapSetting extends AbstractExpandableSetting<String> {
     }
 
     @Override
-    public PrintConfigurator<String> getConfig() {
+    public PrintConfigurator getConfig() {
         return this.printConfigurator;
     }
 

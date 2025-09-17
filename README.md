@@ -1,3 +1,26 @@
+# Entity Printer
+
+![Build Status](https://github.com/mr-alloc/entity-printer/actions/workflows/release.yml/badge.svg)
+![Maven Central](https://img.shields.io/maven-central/v/io.alloc.utils/entity-printer)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+
+**Gradle**
+```groovy
+dependencies {
+    implementation 'io.alloc.utils.entity-printer:0.1.3'
+}
+```
+**Maven**
+```xml
+<dependencies>
+    <dependency>
+        <groupId>io.alloc.utils</groupId>
+        <artifactId>entity-printer</artifactId>
+        <version>0.1.3</version>
+    </dependency>
+</dependencies>
+```
+
 ## Entity Printer는 무엇인가요?
 
 엔터티 프린터는 `JVM`어플리케이션이라면 어디서든 사용가능하며, 간단한 조작으로 직관적인 Java 개체를 볼 수 있는 유틸리티 라이브러리입니다.
@@ -8,9 +31,7 @@ EntityPrinter printer = new EntityPrinter();
 Coordinates coordinates = new Coordinates(21.239832931, 293.29391239);
 
 String result = printer.drawEntity(coordinates);
-System.out.
-
-println(result);
+System.out.println(result);
 /* 출력 결과
  * +--------------+--------------+
  * | x (double)     y (double)   |
@@ -33,12 +54,8 @@ ___
 
 ```java
 List<Coordinate> coordinates = new ArrayList<>();
-coordinates.
-
-add(new Coordinate(21.239832931, 293.29391239));
-        coordinates.
-
-add(new Coordinate(732.2182192, 706.293213243));
+coordinates.add(new Coordinate(21.239832931, 293.29391239));
+coordinates.add(new Coordinate(732.2182192, 706.293213243));
 
 String result = printer.drawCollection(coordinates, Coordinate.class);
 /** 출력 결과
@@ -65,23 +82,22 @@ String result = printer.drawCollection(coordinates, Coordinate.class);
 
 ```java
 // POJO를 출력하는 경우
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
+ExpandableEntitySetting entitySetting = ExpandableSetting.entity();
 // Map을 출력하는 경우
-ExpandableMapSetting mapSetting = ExpandableSetting.EXPANDABLE_MAP_SETTING;
+ExpandableMapSetting mapSetting = ExpandableSetting.map();
 ```
 
 엔터티프린터는 좀 더 **사용자 친화적인 시각화**를 위해 아래와 같은 옵션들을 사용가능 합니다.
 
 #### 필드 활성화: activateFields
 
+특정 필드만 활성화 하고싶은 경우, 필드명을 제공하여 필터 링 할수 있습니다.
+빈 값 제공시, 출력 되지 않습니다.
+
 ```java
-ExpandableMapSetting entitySetting = ExpandableSetting.EXPANDABLE_MAP_SETTING;
-entitySetting.
-
-activateFields(1);
-printer.
-
-drawCollection(coordinates, entitySetting.getConfig(),Coordinate.class)
+ExpandableMapSetting setting = ExpandableSetting.map()
+        .activateFields("x");
+printer.drawCollection(coordinates, setting.getConfig(), Coordinate.class)
 /** 출력 결과
  * +--------------+
  * | x (double)   |
@@ -91,21 +107,23 @@ drawCollection(coordinates, entitySetting.getConfig(),Coordinate.class)
  * | 732.2182192  |
  * +--------------+
  */
+ExpandableMapSetting setting = ExpandableSetting.map()
+        .activateFields();
+printer.drawCollection(coordinates, setting.getConfig(), Coordinate.class)
+/** 출력 결과
+ * No activated field. Please check optional method called by "PrintConfigurator.activateFields()".
+ */
 ```
 
 이 옵션은 위 결과처럼 1번 필드(Coordinate.x)만 활성화하여, 원하는 열만 출력할 수 있는 기능입니다.
 `Map<String, Object>`의 경우, `activateFields("KEY")`처럼 키를 지정하는 방식으로 사용가능합니다.
 
-#### 데이터타입 제외: excludeDataType
+#### 데이터 타입 제외: excludeDataType
 
 ```java
-ExpandableMapSetting entitySetting = ExpandableSetting.EXPANDABLE_MAP_SETTING;
-entitySetting.
-
-excludeDataType();
-printer.
-
-drawCollection(coordinates, entitySetting.getConfig(),Coordinate.class);
+ExpandableMapSetting setting = ExpandableSetting.map()
+        .excludeDataType();
+printer.drawCollection(coordinates, setting.getConfig(), Coordinate.class);
 /** 출력결과
  * +--------------+---------------+
  * | x              y             |
@@ -122,13 +140,9 @@ drawCollection(coordinates, entitySetting.getConfig(),Coordinate.class);
 #### 행의 바닥제거: withoutFloor()
 
 ```java
-ExpandableMapSetting entitySetting = ExpandableSetting.EXPANDABLE_MAP_SETTING;
-entitySetting.
-
-withoutFloor();
-printer.
-
-drawCollection(coordinates, entitySetting.getConfig(),Coordinate.class);
+ExpandableMapSetting setting = ExpandableSetting.map()
+        .withoutFloor();
+printer.drawCollection(coordinates, setting.getConfig(),Coordinate.class);
 /**
  * +--------------+---------------+
  * | x (double)     y (double)    |
@@ -168,18 +182,10 @@ class Person {
 출력확인이 필요한 데이터도 준비합니다.
 ```java
 List<Person> blackpink = new ArrayList<>();
-blackpink.
-
-add(new Person("Jennie", "jennie@black.pink",LocalDateTime.of(1996, 1,16,12,20)));
-        blackpink.
-
-add(new Person("Jisoo", "jisoo@black.pink",LocalDateTime.of(1995, 1,3,17,53)));
-        blackpink.
-
-add(new Person("Rosé", "roseanne@black.pink",LocalDateTime.of(1997, 2,11,7,12)));
-        blackpink.
-
-add(new Person("Lisa", "risa@black.pink",LocalDateTime.of(1997, 3,27,2,9)));
+blackpink.add(new Person("Jennie", "jennie@black.pink",LocalDateTime.of(1996, 1,16,12,20)));
+blackpink.add(new Person("Jisoo", "jisoo@black.pink",LocalDateTime.of(1995, 1,3,17,53)));
+blackpink.add(new Person("Rosé", "roseanne@black.pink",LocalDateTime.of(1997, 2,11,7,12)));
+blackpink.add(new Person("Lisa", "risa@black.pink",LocalDateTime.of(1997, 3,27,2,9)));
 ```
 
 아무 옵션을 지정하지 않은 경우 아래와같이 출력됩니다.
@@ -200,13 +206,9 @@ add(new Person("Lisa", "risa@black.pink",LocalDateTime.of(1997, 3,27,2,9)));
 #### 날짜형식 지정: dateformat(String pattern)
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-dateformat("yyyy-MM-dd hh:mm:ss");
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity()
+        .dateformat("yyyy-MM-dd hh:mm:ss");
+printer.drawCollection(blackpink, setting.getConfig(), Person.class);
 /**
  * +---------------+---------------------+--------------------------+--------------------------------+
  * | name (String)   email (String)        birthday (LocalDateTime)   jsonCache (String)             |
@@ -227,13 +229,9 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 #### 문자열 이스케이프 해제: noEscape()
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-noEscape();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .noEscape();
+printer.drawCollection(blackpink, setting.getConfig(), Person.class);
 /**
  * +---------------+---------------------+--------------------------+--------------------+
  * | name (String)   email (String)        birthday (LocalDateTime)   jsonCache (String) |
@@ -254,13 +252,9 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 #### 멀티라인 허용: allowMultiLine()
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-allowMultiLine();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .allowMultiLine();
+printer.drawCollection(blackpink, setting.getConfig(), Person.class);
 /**
  * +---------------+---------------------+--------------------------+--------------------------------+
  * | name (String)   email (String)        birthday (LocalDateTime)   jsonCache (String)             |
@@ -292,15 +286,9 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 `noEscape()` 옵션과 함께 사용하면, 더 나은 시각하로 사용이가능하며, 이는 NoSQL과 같은 문서기반 데이터에서 더나은 시너지가 나옵니다.
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-allowMultiLine().
-
-allowMultiLine();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .allowMultiLine().noEscape();
+printer.drawCollection(blackpink, setting.getConfig(),Person.class);
 /**
  * +---------------+---------------------+--------------------------+-----------------------------------+
  * | name (String)   email (String)        birthday (LocalDateTime)   jsonCache (String)                |
@@ -335,13 +323,9 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 #### `...` 생략 해제: noEllipsis()
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-noEllipsis();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .noEllipsis();
+printer.drawCollection(blackpink, setting.getConfig(), Person.class);
 /**
  * +---------------+---------------------+--------------------------+----------------------------------------------------------------------------------------------+
  * | name (String)   email (String)        birthday (LocalDateTime)   jsonCache (String)                                                                           |
@@ -365,22 +349,12 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 위에서 소개되었는 옵션들을 일괄적으로 적용하면 다음과 같이 시각화 할 수 있습니다.
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-activateFields(1,2,3)
-    .
-
-dateformat("yyyy/MM/dd HH:mm")
-    .
-
-excludeDataType()
-    .
-
-withoutFloor();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class);
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .activateFields("name", "email", "birthday")
+        .dateformat("yyyy/MM/dd HH:mm")
+        .excludeDataType()
+        .withoutFloor();
+printer.drawCollection(blackpink, setting.getConfig(), Person.class);
 /**
  * +--------+---------------------+------------------+
  * | name     email                 birthday         |
@@ -394,22 +368,12 @@ drawCollection(blackpink, entitySetting.getConfig(),Person.class);
 ```
 
 ```java
-ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-entitySetting.
-
-activateFields(4)
-    .
-
-excludeDataType()
-    .
-
-allowMultiLine()
-    .
-
-noEscape();
-printer.
-
-drawCollection(blackpink, entitySetting.getConfig(),Person.class)
+ExpandableEntitySetting setting = ExpandableSetting.entity();
+        .activateFields("jsonCache")
+        .excludeDataType()
+        .allowMultiLine()
+        .noEscape();
+printer.drawCollection(blackpink, setting.getConfig(),Person.class)
 /**
  * +-----------------------------------+
  * | jsonCache                         |

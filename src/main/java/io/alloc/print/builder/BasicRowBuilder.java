@@ -3,6 +3,7 @@ package io.alloc.print.builder;
 import io.alloc.print.Column;
 import io.alloc.print.field.manager.DefaultPrintableFieldManager;
 import io.alloc.print.field.manager.PrintableFieldManager;
+import io.alloc.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -14,24 +15,24 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
-public class BasicRowBuilder extends AbstractRowBuilder<Integer> {
+public class BasicRowBuilder extends AbstractRowBuilder<Field> {
 
-
-    private PrintableFieldManager<Integer, Field> fieldManager;
+    private PrintableFieldManager<Field> fieldManager;
     private Supplier<Stream<Object>> streamSupplier;
 
     @Override
-    public RowBuilder<Integer> proceed(final Object target, Class<?> typeClass) {
+    @SuppressWarnings("unchecked")
+    public RowBuilder proceed(final Object target, Class<?> typeClass) {
         this.fieldManager = new DefaultPrintableFieldManager(typeClass);
-        this.streamSupplier = () ->
-                (Collection.class.isAssignableFrom(target.getClass())) ? ((Collection) target).stream() : Stream.of(target);
+        this.streamSupplier = () -> Collection.class.isAssignableFrom(target.getClass())
+                ? ((Collection<Object>) target).stream() : Stream.of(target);
         super.initialize();
         return this;
     }
 
     @Override
     protected void calculateColumnInfo() {
-        Arrays.stream(this.fieldManager.getActivatedFields()).forEach(field -> {
+        for (Field field : this.fieldManager.getActivatedFields()) {
             try {
                 final String fieldName = field.getName();
                 final String name = field.getType().getSimpleName();
@@ -41,13 +42,13 @@ public class BasicRowBuilder extends AbstractRowBuilder<Integer> {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        });
+        }
 
         this.setFieldValues();
     }
 
     @Override
-    protected PrintableFieldManager<Integer, Field> getCurrentFieldManager() {
+    protected PrintableFieldManager<Field> getCurrentFieldManager() {
         return this.fieldManager;
     }
 
@@ -61,12 +62,10 @@ public class BasicRowBuilder extends AbstractRowBuilder<Integer> {
                     IntStream.range(0, fields.length).forEach(idx -> {
                         try {
                             final Field field = fields[idx];
-                            field.setAccessible(true);
-                            final Column column = columns.get(idx);
-                            final String fieldName = field.getName();
-                            final String strValue = getStringValue(field.get(row), column);
+                            final String strValue = getStringValue(
+                                    ReflectionUtils.getField(field, row), columns.get(idx));
 
-                            columnMap.put(fieldName, strValue);
+                            columnMap.put(field.getName(), strValue);
                         } catch(Exception skipped) {
                             skipped.printStackTrace();
                         }

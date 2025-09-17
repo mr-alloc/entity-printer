@@ -18,14 +18,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static io.alloc.constant.Resource.LINEFEED;
+import static io.alloc.constant.Resource.SIDE_WALL;
 import static io.alloc.print.handle.KnownCondition.NO_ACTIVATED_MESSAGE;
 
 /**
  * 공통적으로 Row를 만들기위한 추상클래스
  *
- * @param <I> 인덱스 타입
  */
-public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
+public abstract class AbstractRowBuilder<F> implements RowBuilder {
 
     private static final String EMPTY_MESSAGE = "empty";
 
@@ -33,6 +34,10 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
      * 실제로 쌓일 문자열을 담는 StringBuilder
      */
     protected final StringBuilder builder = new StringBuilder(Resource.LINEFEED);
+
+    /**
+     * 테이블에서 사용되는 컬럼 목록
+     */
     protected final List<Column> columns = new ArrayList<>();
     /**
      * 컬럼의 정보를 담는 리스트
@@ -41,29 +46,24 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
 
     private final FloorGenerator floorGenerator = new DefaultFloorGenerator();
     protected PrintOptionAware optionAware;
-    private PrintConfigurator<I> configurator;
+    private PrintConfigurator configurator;
 
-    protected abstract <F> PrintableFieldManager<I, F> getCurrentFieldManager();
+    protected abstract PrintableFieldManager<F> getCurrentFieldManager();
 
     protected abstract void calculateColumnInfo();
 
-    protected PrintConfigurator<I> getConfigurator() {
-        return this.configurator;
-    }
-
 
     protected void initialize() {
-
         if (optionAware.isExceptColumn()) {
-            List<I> activateIndices = this.configurator.getActivateIndexes();
-            this.getCurrentFieldManager().activatePrintableFields(activateIndices);
+            Set<String> activatedNames = this.configurator.getActivatedNames();
+            this.getCurrentFieldManager().activatePrintableFields(activatedNames);
         }
-
-        if (optionAware.hasDateTimeFormat())
-            this.optionAware.setDateFormatter(this.configurator.getDateTimeFormatter());
 
         if (this.getCurrentFieldManager().hasNoActivateFields())
             return;
+
+        if (optionAware.hasDateTimeFormat())
+            this.optionAware.setDateFormatter(this.configurator.getDateTimeFormatter());
 
         // 컬럼 정보 세팅
         this.calculateColumnInfo();
@@ -71,7 +71,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
     }
 
     @Override
-    public RowBuilder<I> config(final PrintConfigurator<I> configurator) {
+    public RowBuilder config(final PrintConfigurator configurator) {
         if (CommonUtils.isNull(configurator))
             return this;
 
@@ -194,7 +194,7 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
                 this.builder.append(suiteFloor.getRoomWithValues(columnValues));
             }
 
-            if (optionAware.isWithoutFloor() && (mapListIterator.hasNext())) {
+            if (optionAware.isWithoutFloor() && mapListIterator.hasNext()) {
                 continue;
             }
             this.builder.append(suiteFloor.getFloorString());
@@ -208,13 +208,8 @@ public abstract class AbstractRowBuilder<I> implements RowBuilder<I> {
         SuiteFloor suiteFloor = floorGenerator.getSuiteFloor();
         String floor = suiteFloor.getFloor().toString();
 
-        int floorLength = floor.length() - 4 <= 0
-                ? 6
-                : floor.length() - 4;
-        final String form = new StringBuilder()
-                .append(Resource.SIDE_WALL).append(" %-").append(floorLength).append("s ").append(Resource.SIDE_WALL).append(Resource.LINEFEED)
-                .append(floor).append(Resource.LINEFEED)
-                .toString();
+        int floorLength = floor.length() - 4 <= 0 ? 6 : floor.length() - 4;
+        String form = String.format("%s %%-%ds %s", SIDE_WALL, floorLength, SIDE_WALL + LINEFEED + LINEFEED);
 
         return String.format(form, EMPTY_MESSAGE);
     }

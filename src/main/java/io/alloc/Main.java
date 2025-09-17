@@ -1,5 +1,7 @@
 package io.alloc;
 
+import io.alloc.constant.PrintOption;
+import io.alloc.print.PrintConfigurator;
 import io.alloc.print.printer.EntityPrinter;
 import io.alloc.print.setting.ExpandableEntitySetting;
 import io.alloc.print.setting.ExpandableSetting;
@@ -7,6 +9,8 @@ import io.alloc.print.setting.ExpandableSetting;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.alloc.constant.PrintOption.*;
 
 public class Main {
 
@@ -19,13 +23,11 @@ public class Main {
         blackpink.add(new Person("Rosé", "roseanne@black.pink", LocalDateTime.of(1997, 2, 11, 7, 12)));
         blackpink.add(new Person("Lisa", "risa@black.pink", LocalDateTime.of(1997, 3, 27, 2, 9)));
 
-        ExpandableEntitySetting entitySetting = ExpandableSetting.EXPANDABLE_ENTITY_SETTING;
-        entitySetting.activateFields(4)
-                .excludeDataType()
-                .allowMultiLine()
-                .noEscape();
+        PrintConfigurator configurator = ExpandableSetting.entity()
+                .activateFields()
+                .getConfig();
 
-        System.out.println(printer.drawCollection(blackpink, entitySetting.getConfig(), Person.class));
+        System.out.println(printer.drawCollection(blackpink, configurator, Person.class));
     }
 
     public static class Person {

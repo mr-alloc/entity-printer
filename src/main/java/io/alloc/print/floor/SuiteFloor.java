@@ -33,9 +33,9 @@ public class SuiteFloor {
         return this.columns;
     }
 
-    private String formatting(String[] columnNames) {
+    private String formatting(String [] columnNames) {
         return this.floor + Resource.LINEFEED +
-                String.format(this.room.toString(), columnNames) + Resource.LINEFEED +
+                String.format(this.room.toString(), (Object[]) columnNames) + Resource.LINEFEED +
                 this.floor + Resource.LINEFEED;
     }
 
@@ -44,7 +44,7 @@ public class SuiteFloor {
     }
 
     public String getRoomWithValues(String[] columnValues) {
-        return String.format(this.room.toString(), columnValues) + Resource.LINEFEED;
+        return String.format(this.room.toString(), (Object[]) columnValues) + Resource.LINEFEED;
     }
 
     public String getFloorString() {
